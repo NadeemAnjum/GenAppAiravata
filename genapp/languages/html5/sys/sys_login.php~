@@ -1,0 +1,69 @@
+<?php
+header('Content-type: application/json');
+
+# close previous session
+
+session_start(); 
+
+if ( !sizeof( $_REQUEST ) )
+{
+    $responseVar = array("error" => "PHP code received no \$_REQUEST?" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+if ( !is_string( $_REQUEST[ 'userid' ] ) || 
+   strlen( $_REQUEST[ 'userid' ] ) < 3 ||
+   strlen( $_REQUEST[ 'userid' ] ) > 30 ||
+   !filter_var( $_REQUEST[ 'userid' ], FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>'/^[A-Za-z][A-Za-z0-9_]+$/') ) ) )
+{
+    $responseVar = array("error" => "empty or invalid user name" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+$userid = $_REQUEST[ 'userid' ];
+
+if ( !is_string( $_REQUEST[ 'password' ] ) || strlen( $_REQUEST[ 'password' ] ) < 10 || strlen( $_REQUEST[ 'password' ] ) > 100 )
+{
+    $responseVar = array("error" => "empty or invalid password" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+$pw = $_REQUEST[ 'password' ];
+
+// connect
+try {
+     $m = new MongoClient();
+} catch ( Exception $e ) {
+    $responseVar = array("error" => "Could not connect to the db " + $e->getMessage() );
+    echo (json_encode($responseVar));
+    exit();
+}
+  
+$coll = $m->__application__->users;
+
+$results[ 'status' ] = "User not found or incorrect password";
+if ( $doc = $coll->findOne( array( "name" => $userid ) ) )
+{
+   if ( password_verify ( $pw , $doc[ 'password' ] ) )
+   {  
+      $results[ 'status' ] = "login successful";
+      $results[ '_logon' ] = $userid;
+      $results[ '-close' ] = 1;
+      $_SESSION[ 'logon' ] = $userid;
+   }
+}
+#   } else {
+#      $results[ 'pw' ] = $pw;
+#      $results[ 'storedhash' ] = $doc[ 'password' ];
+#      $results[ 'pwhashhash' ] = password_hash( $pw, PASSWORD_DEFAULT );
+#   }
+#} else {
+#  $results[ 'status' ] = "User not found or incorrect password";
+
+# $results[ 'sessionid' ] = session_id();
+echo (json_encode($results));
+exit();
+?>

@@ -1,0 +1,25 @@
+<form id="__moduleid__">
+<span id="__moduleid___input_area"></span>
+<script>
+{
+   var t = $( "#global_data" ).data( "repeats" );
+   if ( t != undefined ) {
+      $( "#global_data" ).removeData( "repeats" );
+   }
+   t = new Object();
+   $( "#global_data" ).data( "repeats", t );
+}
+{
+   var t = $( "#global_data" ).data( "repeats_eval" );
+   if ( t != undefined ) {
+      $( "#global_data" ).removeData( "repeats_eval" );
+   }
+   t = new Object();
+   $( "#global_data" ).data( "repeats_eval", t );
+}
+input_eval = "";
+input_html = "<table>";
+input_repeats = "";
+input_trees = [];
+skipped_row = 0;
+clearPull();

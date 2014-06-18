@@ -1,0 +1,5 @@
+this_html = '<tr><td><label for="__fields:id__" >__fields:label__ </label></td><td><div name="__fields:id__" id="__fields:id__"></div></td></tr>';
+this_eval = '$("#__fields:id__").jstree({"plugins":["checkbox"],"core":{"data":{"dataType":"json","url":function(node){return "ajax/sys_config/sys_files.php";},"data":function(node){return{"id":node.id};}}}});$( "#__fields:id__" ).attr( "type", "div" );';
+input_trees.push( "__fields:id__" );
+input_html += this_html;
+input_eval += this_eval;

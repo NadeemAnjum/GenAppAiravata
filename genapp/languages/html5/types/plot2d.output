@@ -1,0 +1,9 @@
+</table>
+<p><label for="__fields:id__">__fields:label__ <div id="__fields:id__" type="plot2d" style="width:600px;height:300px"__~fields:help{ class="help_link"></div>
+__~fields:help{<span class="help">__fields:help__</span>}</label></p>
+<script>
+$.plot( $( "#__moduleid___output #__fields:id__" ), [[]], gd.data( "_plot_options" ) );
+setLastValue( "__moduleid___output", "#__fields:id__" );
+$( "#global_data" ).data( "_extra_resets" ).push( "__fields:id__" );
+</script>
+<table>

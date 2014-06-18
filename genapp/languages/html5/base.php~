@@ -1,0 +1,601 @@
+<?php
+header('Content-type: application/json');
+
+$GLOBALS['THRIFT_ROOT'] = '../lib/Thrift/';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Transport/TTransport.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Transport/TBufferedTransport.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Transport/TSocket.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Protocol/TProtocol.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Protocol/TBinaryProtocol.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Exception/TException.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Exception/TApplicationException.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Exception/TProtocolException.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Exception/TTransportException.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Base/TBase.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Type/TType.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Type/TMessageType.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'Factory/TStringFuncFactory.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'StringFunc/TStringFunc.php';
+require_once $GLOBALS['THRIFT_ROOT'] . 'StringFunc/Core.php';
+
+$GLOBALS['AIRAVATA_ROOT'] = '../lib/Airavata/';
+require_once $GLOBALS['AIRAVATA_ROOT'] . 'API/Airavata.php';
+require_once $GLOBALS['AIRAVATA_ROOT'] . 'Model/Workspace/Types.php';
+require_once $GLOBALS['AIRAVATA_ROOT'] . 'Model/Workspace/Experiment/Types.php';
+require_once $GLOBALS['AIRAVATA_ROOT'] . 'API/Error/Types.php';
+
+require_once '../lib/AiravataClientFactory.php';
+
+use Airavata\API\Error\AiravataClientException;
+use Airavata\API\Error\AiravataSystemException;
+use Airavata\API\Error\InvalidRequestException;
+use Airavata\Client\AiravataClientFactory;
+use Thrift\Protocol\TBinaryProtocol;
+use Thrift\Transport\TBufferedTransport;
+use Thrift\Transport\TSocket;
+use Airavata\API\AiravataClient;
+use Airavata\Model\Workspace\Project;
+use Airavata\Model\Workspace\Experiment\Experiment;
+use Airavata\Model\Workspace\Experiment\DataObjectType;
+use Airavata\Model\Workspace\Experiment\UserConfigurationData;
+use Airavata\Model\Workspace\Experiment\ComputationalResourceScheduling;
+use Airavata\Model\Workspace\Experiment\DataType;
+use Airavata\API\Error\ExperimentNotFoundException;	
+use Airavata\Model\Workspace\Experiment\ExperimentState;
+use Thrift\Exception\TTransportException;
+
+#airavata functions
+function createProject($owner, $projectName){	
+	$airavataconfig = parse_ini_file("airavata-client-properties.ini");
+	$transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
+	$transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
+	$protocol = new TBinaryProtocol($transport);
+	$transport->open();
+	$airavataclient = new AiravataClient($protocol);
+	try
+	{	    
+		$project = new Project();
+		$project->owner = $owner;
+		$project->name = $projectName;		
+		$projId = $airavataclient->createProject($project);
+		
+		if ($projId)
+		{
+		    return "$projId";
+		}
+		else
+		{
+		    echo 'Failed to create project.';
+		}
+	    
+	}
+	catch (InvalidRequestException $ire)
+	{
+	    print 'InvalidRequestException: ' . $ire->getMessage()."\n";
+	}
+	catch (AiravataClientException $ace)
+	{
+	    print 'Airavata System Exception: ' . $ace->getMessage()."\n";
+	}
+	catch (AiravataSystemException $ase)
+	{
+	    print 'Airavata System Exception: ' . $ase->getMessage()."\n";
+	}
+	$transport->close();
+}
+
+function createExperiment($usrName, $expName, $projId, $execId, $inp){	
+	$airavataconfig = parse_ini_file("airavata-client-properties.ini");
+	$transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
+	$transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
+	$protocol = new TBinaryProtocol($transport);
+	$transport->open();
+	$airavataclient = new AiravataClient($protocol);
+	try
+	{	    
+		/* ComputationalResourceScheduling data for Trestles*/
+		$cmRST = new ComputationalResourceScheduling();
+		$cmRST->resourceHostId = "localhost";
+		$cmRST->ComputationalProjectAccount = "ixxi-2013";
+		$cmRST->nodeCount = 1;
+		$cmRST->numberOfThreads = 0;
+		$cmRST->queueName = "normal";
+		$cmRST->wallTimeLimit = 15;
+		$cmRST->jobStartTime = 0;
+		$cmRST->totalPhysicalMemory = 0;
+
+		$cmRS = $cmRST;
+		$userConfigurationData = new UserConfigurationData();
+		$userConfigurationData->airavataAutoSchedule = 0;
+		$userConfigurationData->overrideManualScheduledParams = 0;
+		$userConfigurationData->computationalResourceScheduling = $cmRS;
+
+		
+		$appId = $execId;
+
+		/* Experiment input and output data. */
+		$input = new DataObjectType();
+		$input->key = "input";
+		$input->value = $inp;		
+		$input->type = DataType::STRING;
+		$exInputs = array($input);		
+		$output = new DataObjectType();
+		$output->key = "output";
+		$output->value = "";
+		$output->type = DataType::STDOUT;
+		$exOutputs = array($output);
+
+		/* Create Experiment: needs to update using unique project ID. */
+		$user = $usrName;
+		$exp_name = $expName;
+		$proj = $projId;
+
+		$experiment = new Experiment();
+		$experiment->projectID = $proj;
+		$experiment->userName = $user;
+		$experiment->name = $exp_name;
+		$experiment->applicationId = $appId;
+		$experiment->userConfigurationData = $userConfigurationData;
+		$experiment->experimentInputs = $exInputs;
+		$experiment->experimentOutputs = $exOutputs;
+
+		$expId = $airavataclient->createExperiment($experiment);
+
+		if ($expId)
+		{
+		    var_dump($experiment);
+		    return $expId;
+		}
+		else
+		{
+		    return 0;
+		}
+	}
+	catch (InvalidRequestException $ire)
+	{
+		
+	    print 'InvalidRequestException: ' . $ire->getMessage()."\n";
+	    return -1;
+	}
+	catch (AiravataClientException $ace)
+	{
+	    print 'Airavata System Exception: ' . $ace->getMessage()."\n";
+	    return -2;
+	}
+	catch (AiravataSystemException $ase)
+	{
+	    print 'Airavata System Exception: ' . $ase->getMessage()."\n";
+	    return -3;
+	}
+	$transport->close();
+}
+
+function launchExperiment($expId){
+	$airavataconfig = parse_ini_file("airavata-client-properties.ini");
+	$transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
+	$transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
+	$protocol = new TBinaryProtocol($transport);
+	$transport->open();
+	$airavataclient = new AiravataClient($protocol);	
+	try
+	{	   
+	   $airavataclient->launchExperiment($expId, 'airavataToken');
+	   return 1;
+	}
+	catch (InvalidRequestException $ire)
+	{
+	    return -1;
+	}
+	catch (AiravataClientException $ace)
+	{
+	    return -2;
+	}
+	catch (AiravataSystemException $ase)
+	{
+	    return -3;
+	}
+	catch (ExperimentNotFoundException $enf)
+	{
+	    return -4;
+	}
+	$transport->close();
+}
+
+function get_experiment_outputs($expId)
+{
+    $airavataconfig = parse_ini_file("airavata-client-properties.ini");
+	$transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
+	$transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
+	$protocol = new TBinaryProtocol($transport);
+	$transport->open();
+	$airavataclient = new AiravataClient($protocol);
+
+    try
+    {
+        return $airavataclient->getExperimentOutputs($expId);
+    }
+    catch (InvalidRequestException $ire)
+    {
+        echo 'InvalidRequestException!<br><br>' . $ire->getMessage();
+    }
+    catch (ExperimentNotFoundException $enf)
+    {
+        echo 'ExperimentNotFoundException!<br><br>' . $enf->getMessage();
+    }
+    catch (AiravataClientException $ace)
+    {
+        echo 'AiravataClientException!<br><br>' . $ace->getMessage();
+    }
+    catch (AiravataSystemException $ase)
+    {
+        echo 'AiravataSystemException!<br><br>' . $ase->getMessage();
+    }
+    catch (TTransportException $tte)
+    {
+        echo 'TTransportException!<br><br>' . $tte->getMessage();
+    }
+    catch (\Exception $e)
+    {
+        echo 'Exception!<br><br>' . $e->getMessage();
+    }
+
+}
+
+
+function getOutput($expId){	
+
+	$airavataconfig = parse_ini_file("airavata-client-properties.ini");
+	$transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
+	$transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
+	$protocol = new TBinaryProtocol($transport);
+	$transport->open();
+	$airavataclient = new AiravataClient($protocol);
+	$outputs = get_experiment_outputs($expId);
+	return $outputs;	
+	var_dump($outputs);
+	$transport->close();
+}
+
+function get_experiment_status($expId)
+{
+    	$airavataconfig = parse_ini_file("airavata-client-properties.ini");
+	$transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
+	$transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
+	$protocol = new TBinaryProtocol($transport);
+	$transport->open();
+	$airavataclient = new AiravataClient($protocol);
+
+	    try
+	    {
+		$experimentStatus = $airavataclient->getExperimentStatus($expId);
+	    }
+	    catch (InvalidRequestException $ire)
+	    {
+		echo 'InvalidRequestException!<br><br>' . $ire->getMessage();
+	    }
+	    catch (ExperimentNotFoundException $enf)
+	    {
+		echo 'ExperimentNotFoundException!<br><br>' . $enf->getMessage();
+	    }
+	    catch (AiravataClientException $ace)
+	    {
+		echo 'AiravataClientException!<br><br>' . $ace->getMessage();
+	    }
+	    catch (AiravataSystemException $ase)
+	    {
+		echo 'AiravataSystemException!<br><br>' . $ase->getMessage();
+	    }
+	    catch (\Exception $e)
+	    {
+		echo 'Exception!<br><br>' . $e->getMessage();
+	    }
+
+	    return ExperimentState::$__names[$experimentStatus->experimentState];
+}
+
+
+function getExperimentStatus($expId){
+	$airavataconfig = parse_ini_file("airavata-client-properties.ini");
+	$transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
+	$transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
+	$protocol = new TBinaryProtocol($transport);
+	$transport->open();
+	$airavataclient = new AiravataClient($protocol);
+	$experimentStatusString = get_experiment_status($expId);
+	return $experimentStatusString;
+	$transport->close();
+}
+
+#end of airavata functions
+
+# setup php session
+session_start();
+if (!isset($_SESSION['count'])) {
+  $_SESSION['count'] = 0;
+} else {
+  $_SESSION['count']++;
+}
+
+if ( !sizeof( $_REQUEST ) )
+{
+    $responseVar = array("error" => "PHP code received no \$_REQUEST?" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+$do_logoff = 0;
+
+if ( $_REQUEST[ "_logon" ] != $_SESSION[ 'logon' ] )
+{
+   $do_logoff = 1;
+   unset( $_SESSION[ 'logon' ] );
+   $responseVar[ '_logon' ] = "";
+}
+
+// error_log( "__moduleid__:\t", 3, "/tmp/mylog" );
+
+// if ( isset( $_REQUEST[ '_logon' ] ) )
+// {
+//    error_log( "request: " . $_REQUEST[ '_logon' ], 3, "/tmp/mylog" );
+// } else {
+//    error_log( "request: not set", 3, "/tmp/mylog" );
+// }
+
+// if ( isset( $_SESSION[ 'logon' ] ) )
+// {
+//    error_log( "\tsession:" .  $_SESSION[ 'logon' ] . "\n", 3, "/tmp/mylog" );
+// } else {
+//   error_log( "\tsession: not set\n", 3, "/tmp/mylog" );
+// }
+
+$cmd = "__executable_path:html5__/__executable__";
+if ( !is_executable( $cmd ) )
+{
+    $responseVar[ "error" ] = "command not found or not executable";
+    echo (json_encode($responseVar));
+    exit();
+}
+
+// if user based, use alternate directory structure
+__~uniquedir{$uniquedir = "__uniquedir__";}
+if ( !isset( $uniquedir ) &&
+     isset( $_SESSION[ 'logon' ] ) &&
+     strlen( $_SESSION[ 'logon' ] ) > 1 )
+{
+   $dir = "__docroot:html5__/__application__/results/users/" . $_SESSION[ 'logon' ] . "/";
+   if ( isset( $_REQUEST[ '_project' ] ) &&
+        strlen( $_REQUEST[ '_project' ] ) > 1 )
+   {
+      $dir .= $_REQUEST[ '_project' ];
+   } else {
+      $dir .= 'no_project_specified';
+   }
+} else {
+   do {
+       $dir = uniqid( "__docroot:html5__/__application__/results/" );
+   } while( file_exists( $dir ) );
+}
+
+if ( !file_exists( $dir ) )
+{
+   ob_start();
+
+   if ( !mkdir( $dir, 0777, true ) )
+   {  
+      $cont = ob_get_contents();
+      ob_end_clean();
+      $responseVar[ "error" ] = "could not create directory " . $dir . " " . $cont;
+      echo (json_encode($responseVar));
+      exit();
+   }
+   chmod( $dir, 0775 );
+   ob_end_clean();
+}
+
+$_REQUEST[ '_base_directory' ] = $dir;
+
+if ( !isset( $_SESSION[ 'udpport' ] ) ||
+     !isset( $_SESSION[ 'udphost' ] ) || 
+     !isset( $_SESSION[ 'resources' ] ) )
+{
+   $appjson = json_decode( file_get_contents( "__appconfig__" ) );
+   $_SESSION[ 'udphost'         ] = $appjson->messaging->udphostip;
+   $_SESSION[ 'udpport'         ] = $appjson->messaging->udpport;
+   $_SESSION[ 'resources'       ] = $appjson->resources;
+   $_SESSION[ 'resourcedefault' ] = $appjson->resourcedefault;
+   $_SESSION[ 'submitpolicy'    ] = $appjson->submitpolicy;
+}
+session_write_close();
+
+$_REQUEST[ '_udphost' ] =  $_SESSION[ 'udphost' ];
+$_REQUEST[ '_udpport' ] =  $_SESSION[ 'udpport' ];
+$_REQUEST[ 'resourcedefault' ] = $_SESSION[ 'resourcedefault' ];
+
+__~resource{$useresource = "__resource__";}
+__~submitpolicy{$submitpolicy = "__submitpolicy__";}
+
+if ( !isset( $submitpolicy ) )
+{
+   if ( isset( $_SESSION[ 'submitpolicy' ] ) &&
+        $_SESSION[ 'submitpolicy' ] == "login" &&
+        ( !isset( $_SESSION[ 'logon' ] ) ||
+          strlen( $_SESSION[ 'logon' ] ) == 0 ) )
+   {
+         $responseVar[ "error" ] = "You must be logged on to submit";
+         echo (json_encode($responseVar));
+         exit();
+   }
+} else {
+   if ( $submitpolicy == "login" &&
+        ( !isset( $_SESSION[ 'logon' ] ) ||
+          strlen( $_SESSION[ 'logon' ] ) == 0 ) )
+   {
+         $responseVar[ "error" ] = "You must be logged on to submit";
+         echo (json_encode($responseVar));
+         exit();
+   }
+}
+
+$cmdprefix = "";
+
+
+if ( isset( $useresource ) &&
+     !isset( $_SESSION[ 'resources' ]->$useresource ) )
+{
+      $responseVar[ "error" ] = "module specified resource " . $useresource . " is not defined in appconfig";
+      echo (json_encode($responseVar));
+      exit();
+}
+
+if ( !isset( $_SESSION[ 'resources' ]->$_SESSION[ 'resourcedefault' ] ) &&
+     !isset( $useresource ) )
+{
+     $responseVar[ "error" ] = "no default resource specified in appconfig and no resource defined in module";
+     echo (json_encode($responseVar));
+     exit();
+} else {
+   if ( isset( $useresource ) )
+   {
+      $cmdprefix = $_SESSION[ 'resources' ]->$useresource;
+   } else {
+      $cmdprefix = $_SESSION[ 'resources' ]->$_SESSION[ 'resourcedefault' ];
+   }
+   if ( strlen( $cmdprefix ) > 1 )
+   {  
+      $fileargs = 1;
+   }
+}
+
+if ( sizeof( $_FILES ) )
+{
+   foreach ( $_FILES as $k=>$v )
+   {
+      if ( is_array( $v[ 'error' ] ) )
+      {
+         foreach ( $v[ 'error' ] as $k1=>$v1 )
+         {
+            if ( $v[ 'error' ][ $k1 ] )
+            {
+               if ( is_string( $v[ 'name' ][ $k1 ] ) && !strlen( $v[ 'name' ][ $k1 ] ) )
+               {
+                  $responseVar[ "error" ] = "missing file input for identifier " . $k;
+               } else {
+                  $responseVar[ "error" ] = "error uploading file " . $v[ 'name' ][ $k1 ] . " (possibly too large and, if so, php.ini and/or httpd.conf could be adjusted on the server)";
+               }
+               echo (json_encode($responseVar));
+               exit();
+            }
+//            error_log( "move_uploaded_file( " . $v[ 'tmp_name' ][ $k1 ] . ',' .  $dir . '/' . $v[ 'name' ][ $k1 ] . "\n", 3, "/var/tmp/my-errors.log");
+            if ( !move_uploaded_file( $v[ 'tmp_name' ][ $k1 ], $dir . '/' . $v[ 'name' ][ $k1 ] ) )
+            {
+               $responseVar[ "error" ] = "could not move file " . $v[ 'name' ][ $k1 ];
+               echo (json_encode($responseVar));
+               exit();
+            }
+            $_REQUEST[ $k ][] = $dir . '/' . $v[ 'name' ][ $k1 ];
+         }
+      } else {
+         if ( $v[ 'error' ] )
+         {
+            if ( is_string( $v[ 'name' ] ) && !strlen( $v[ 'name' ] ) )
+            {
+               $responseVar[ "error" ] = "missing file input for identifier " . $k;
+            } else {
+               $responseVar[ "error" ] = "error uploading file " . $v[ 'name' ] . " (possibly too large and, if so, php.ini and/or httpd.conf could be adjusted on the server)";
+            }
+            echo (json_encode($responseVar));
+            exit();
+         }
+//         error_log( "move_uploaded_file( " . $v[ 'tmp_name' ] . ',' .  $dir . '/' . $v[ 'name' ] . "\n", 3, "/var/tmp/my-errors.log");
+         if ( !move_uploaded_file( $v[ 'tmp_name' ], $dir . '/' . $v[ 'name' ] ) )
+         {
+            $responseVar[ "error" ] = "could not move file " . $v[ 'name' ];
+            echo (json_encode($responseVar));
+            exit();
+         }
+         $_REQUEST[ $k ][] = $dir . '/' . $v[ 'name' ];
+      }
+   }
+}
+
+if ( sizeof( $_REQUEST ) )
+{
+    $keys = preg_grep( "/-/", array_keys( $_REQUEST ) );
+    foreach ( $keys as $k => $v )
+    {
+        $a = preg_split( "/-/", $v );
+        $_REQUEST[ $a[ 0 ] ][ $a[ 1 ] - 1 ] = $_REQUEST[ $v ];
+        unset( $_REQUEST[ $v ] );
+    }
+
+    $json = json_encode( $_REQUEST );
+    $json = str_replace( "'", "_", $json );
+    ob_start();
+    if ( !chdir( $dir ) )
+    {
+      $cont = ob_get_contents();
+      ob_end_clean();
+      $responseVar[ "error" ] = "could not create directory " . $dir . " " . $cont;
+      echo (json_encode($responseVar));
+      exit();
+    }
+    ob_end_clean();
+    if ( isset( $fileargs ) )
+    {
+      ob_start();
+      if (!file_put_contents( "_args", $json ) )
+      {
+         $cont = ob_get_contents();
+         ob_end_clean();
+         $responseVar[ "error" ] = "could not write _args for remote submission " . $cont;
+         echo (json_encode($responseVar));
+         exit();
+      }
+      ob_end_clean();
+      $cmd = "$cmdprefix 'cd $dir;$cmd \"\$(< $dir/_args )\"'";
+    } else {
+      $cmd .= " '$json'";
+    }
+	ob_start();
+	$projId=createProject("nadeem", "__executable__");
+	$expId=createExperiment("nadeem", "exp1", $projId, "__executable__Application", $json);	
+	$res = launchExperiment($expId);	
+	while(($status=getExperimentStatus($expId))!="COMPLETED"){		
+		sleep(1);
+	}
+	$outputs = getOutput($expId);	
+	
+	foreach ($outputs as $output)
+	{
+	    error_log("$output->type: $output->value      <br><br>");
+	    $results = $output->value ;
+	}
+    //$results = exec( $cmd );
+    $results = str_replace( "__docroot:html5__/__application__/", "", $results );
+    if ( $do_logoff == 1 )
+    {   
+        $results = substr( trim( $results ), 0, -1 ) + ",\"_login\":\"\"}";
+    }
+} else {
+    $responseVar[ "error" ] = "PHP code received no \$_REQUEST?";
+    echo (json_encode($responseVar));
+    exit();
+}
+
+// cleanup CURRENTLY DISABLED!
+if ( sizeof( $_FILES ) )
+{
+   $files = new RecursiveIteratorIterator(
+       new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+       RecursiveIteratorIterator::CHILD_FIRST
+   );
+
+   foreach ($files as $fileinfo) {
+      $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+//      $todo( $fileinfo->getRealPath() );
+   }
+//   rmdir( $dir );
+}
+ ob_end_clean();
+echo $results;
+?>

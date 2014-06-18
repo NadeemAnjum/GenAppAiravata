@@ -1,0 +1,167 @@
+</ul>
+</nav>
+
+<div id="panelmain" >
+<p></p>
+<div>
+<script>
+    var count = 0;
+    var sidewidth = parseFloat( $( ".sidebar" ).css( "width" ) ) + 
+                    parseFloat( $( ".sidebar" ).css( "padding-left" ) ) +
+                    parseFloat( $( ".sidebar" ).css( "padding-right" ) ) +
+                    parseFloat( $( ".sidebar" ).css( "border-left-width" ) ) +
+                    parseFloat( $( ".sidebar" ).css( "border-right-width" ) ) +
+                    parseFloat( $( ".sidebar" ).css( "margin-left" ) ) +
+                    parseFloat( $( ".sidebar" ).css( "margin-right" ) )
+    ;
+    var speed = 400;
+    $( "#panelmain" ).css( "left", count % 2 ? 0 : sidewidth );
+__~debugcss{ console.log( "sidewidth: " + sidewidth );}
+    $( ".sidebar ul li" ).click( function() {
+__~altversion{  // this was is simpler, but bugs out on seamonkey linux}
+__~altversion{        // var myImg = $( "header span img" );}
+__~altversion{        // myImg.attr( 'src', 'pngs/' +  $( this ).attr( "id" ) + '.png' );}
+__~altversion{        // myImg.attr( 'id', $( this ).attr( "id" ) );}
+__~altversion{        // this is what we needed to do}
+__~altversion{        // var myHtml = "<img height=50px id='" + $( this ).attr( "id" ) + "' src='pngs/" +  $( this ).attr( "id" ) + ".png'>";}
+__~altversion{        // console.log( $( "#seabug" ).html() );}
+__~altversion{        // console.log( myHtml );}
+        var myTag = $( this ).attr( "id" );
+        $( "#seabug" ).html( "<img height=50px style=\"vertical-align:middle\" id='" + myTag + "' src='pngs/" +  myTag + ".png'>" );
+        $( "#panelmain" ).load( "ajax/" + myTag + ".html" );
+        $( "#menuspan" ).trigger( "click" );
+    } );
+
+    function menuOnOff(event) {
+        count++;
+// __~debugcss{        // console.log( count % 2 ? "menuonoff true" : "menuonoff false" );}
+        var ofs = count % 2 ? 0 : sidewidth;
+        var wid = count % 2 ? '100%' : $("#panelmain").parent().parent().width() - sidewidth - 20;
+__~debugcss{        // console.log( $("#panelmain").parent().parent().width() );}
+__~debugcss{        // console.log( "sidewidth at click: " + sidewidth );}
+__~debugcss{        // console.log( "parentparentwidth at click: " + $("#panelmain").parent().parent().width() );}
+__~debugcss{        // console.log( "width on click: " + wid );}
+        $( ".toggle" ).toggle( speed );
+        $( "#panelmain" ).animate( {left: ofs, width: wid }, speed );
+    }
+
+    $( window ).resize(function() {
+        var ofs = count % 2 ? 0 : sidewidth;
+        var wid = count % 2 ? '100%' : $( "#panelmain" ).parent().parent().width() - sidewidth - 20;
+__~debugcss{        // console.log( "sidewidth at resize: " + sidewidth );}
+__~debugcss{        // console.log( "parentparentwidth at resize: " + $("#panelmain").parent().parent().width() );}
+__~debugcss{        // console.log( "width on resize: " + wid );}
+        $( "#panelmain" ).css( "left", ofs ).css( "width", wid );
+    } );
+
+$( "#hoverhelp" ).click(function() {
+   if ( !$( "#global_data" ).data( "hoverhelp" ) ||
+        $( "#global_data" ).data( "hoverhelp" ) == 0 )
+   {
+       $( "#global_data" ).data( "hoverhelp", 1 );
+   } else {
+       $( "#global_data" ).data( "hoverhelp", 0 );
+   }
+   setHoverHelp();
+});
+setHoverHelp();
+
+$( "#config" ).click( function() {
+   var s = $( '#_state' );
+   var l = s.data( '_logon' );
+   if ( l && l.length )
+   {
+       $( "#configbody" ).load( "etc/sys_user_config.html" );
+   } else {
+       $( "#configbody" ).load( "etc/sys_register.html" );
+   }
+   $( ".modalDialog" ).addClass( "modalDialog_on" );
+});
+
+function closeModal()
+{
+   $( ".modalDialog" ).removeClass( "modalDialog_on" );
+   setTimeout(function(){
+       $( "#configbody" ).html( "" );
+   }, 400);
+}
+
+$( "#closeModal" ).click( function() {
+   closeModal();
+});
+
+$( "#login" ).click( function() {
+   $( "#configbody" ).load( "etc/sys_login.html" );
+   $( ".modalDialog" ).addClass( "modalDialog_on" );
+});
+
+$( "#files" ).click( function() {
+   var s = $( '#_state' );
+   var l = s.data( '_logon' );
+   if ( l && l.length )
+   {
+      $( "#configbody" ).load( "etc/sys_file_manager.html" );
+      $( ".modalDialog" ).addClass( "modalDialog_on" );
+   }
+});
+
+$( "#logoff" ).click( function() {
+   $( "#configbody" ).load( "etc/sys_logoff.html" );
+   $( ".modalDialog" ).addClass( "modalDialog_on" );
+});
+
+$( "#register" ).click( function() {
+   $( "#configbody" ).load( "etc/sys_register.html" );
+   $( ".modalDialog" ).addClass( "modalDialog_on" );
+});
+
+function syncState()
+{
+   var s = $( '#_state' );
+   var l = s.data( '_logon' );
+   var ll = s.data( '_logon:last' );
+   if ( !ll || l != ll )
+   {
+      if ( l && l.length )
+      {
+          $( "#login" ).html( "" );
+          $( "#logoff" ).html( "Logoff " + l );
+          $( "#files" ).show();
+//          $( "#register" ).html( "" );
+//          $( "#userconfig" ).html( "<img src=\"etc/config.png\" width=40px id=\"config\" class=\"config\">" );
+      } else {
+          $( "#login" ).html( "Login" );
+          $( "#logoff" ).html( "" );
+          $( "#sel_project" ).html( "" );
+          $( "#files" ).hide();
+//          $( "#register" ).html( "Register" );
+      }
+      s.data( '_logon:last', l );
+   }
+   var p = s.data( '_project' );
+   var pl = s.data( '_project:last' );
+   if ( !pl || p != pl )
+   {
+      if ( p && p.length )
+      {
+          $( "#sel_project" ).html( "Project " + p );
+      } else {
+          $( "#sel_project" ).html( "" );
+      }
+      s.data( '_project:last', p );
+   }
+}
+
+$.getJSON( "ajax/sys_config/sys_status.php", {
+tags: "_logon",
+tagmode: "any",
+format: "json"
+})
+.done(function( data ) {
+$( '#_state' ).data( "_logon", data[ "_logon" ] );
+syncState();
+});
+
+</script>
+</body>
+</html>

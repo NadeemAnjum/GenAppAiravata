@@ -1,0 +1,8 @@
+<hr>
+<form id="__moduleid___output">
+<div id="msgs" class="warning" type="msgs"></div>
+<script>
+setLastValue( "__moduleid___output", "#msgs" );
+$( "#global_data" ).data( "_extra_resets", [] );
+</script>
+<table>

@@ -1,0 +1,105 @@
+# this is a language file, any language specific data should go here
+{
+  "id"          : "html5",
+  "description" : "This is our first try at an html5 based genapp module",
+  "version"     : 1,
+# options are for directives in the inputs (one source base can create tweaked versions)
+#  "options"     : { "option1" : "true", 
+#                    "option2" : "true"
+#                  },
+  "assembly_directives" :
+                  {
+                     "replacementif" : { 
+                                         "required" : "true", 
+                                         "checked"  : "true"
+                                       }
+                  },
+  "assembly"    : [
+                   {
+                    "frequency"  : "once",
+                    "output"     : "ajax/sys_uid.php",
+                    "inputs"     : [ 
+                                    { "sys/sys_uid.php" : "once"        }
+                                   ]
+                    },
+                   {
+                    "frequency"  : "once",
+                    "output"     : "index.html",
+                    "inputs"     : [ 
+                                    { "base_header.html" : "once"        },
+                                    { "base_items.html"  : "menu:id"     },
+                                    { "base_footer.html" : "once"        }
+                                  ]
+                   },
+                   {
+                    "frequency"  : "menu:id",
+                    "output"     : "ajax/__menu:id__.html",
+                    "inputs"     : [ 
+                                    { "menuelement_header.html" : "once"            },
+                                    { "menuelement_items.html"  : "menu:modules:id" },
+                                    { "menuelement_footer.html" : "once"            }
+                                  ]
+                   }
+                  ,{
+                    "frequency"  : "menu:modules:id",
+                    "output"     : "ajax/__menu:id__/__menu:modules:id__.html",
+                    "inputs"     : [ 
+                                    { "types/input.header"           : "once"     },
+                                    { "types/__fields:type__.input"  : "fields:id" },
+                                    { "types/input.footer"           : "once"     },
+                                    { "types/output.header"          : "once"     },
+                                    { "types/__fields:type__.output" : "fields:id" },
+                                    { "types/output.footer"          : "once"     }
+                                   ]
+                   }
+                   ,{
+                    "frequency"  : "menu:modules:id",
+                    "output"     : "ajax/__menu:id__/__menu:modules:id__.php",
+                    "inputs"     : [ 
+                                    { "base.php" : "once" }
+                                   ]
+                   }
+# special configuration modules from config.json
+                  ,{
+                    "frequency"  : "config:modules:id",
+                    "output"     : "etc/__menu:modules:id__.html",
+                    "inputs"     : [ 
+                                    { "types/input.header"           : "once"     },
+                                    { "types/__fields:type__.input"  : "fields:id" },
+                                    { "types/input.footer"           : "once"     },
+                                    { "types/output.header"          : "once"     },
+                                    { "types/__fields:type__.output" : "fields:id" },
+                                    { "types/output.footer"          : "once"     }
+                                   ]
+                   }
+                   ,{
+                    "frequency"  : "config:modules:id",
+                    "output"     : "ajax/__menu:id__/__menu:modules:id__.php",
+                    "inputs"     : [ 
+                                    { "sys/__moduleid__.php" : "once" }
+                                   ]
+                   }
+                   ,{
+                    "frequency"  : "once",
+                    "output"     : "ajax/mail.php",
+                    "inputs"     : [ 
+                                    { "sys/mail.php" : "once" }
+                                   ]
+                   }
+                   ,{
+                    "frequency"  : "once",
+                    "output"     : "util/msg-udpserver.php",
+                    "inputs"     : [ 
+                                    { "util/msg-udpserver.php" : "once" }
+                                   ]
+                   }
+                   ,{
+                    "frequency"  : "once",
+                    "output"     : "util/msg-wsserver.php",
+                    "inputs"     : [ 
+                                    { "util/msg-wsserver.php" : "once" }
+                                   ]
+                   }
+                  ]
+}
+

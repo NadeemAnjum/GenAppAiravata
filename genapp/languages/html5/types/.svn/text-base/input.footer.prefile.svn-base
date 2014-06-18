@@ -1,0 +1,91 @@
+</table>
+<p><button id="__moduleid___submit"><span class="buttontext">Submit</span></button>
+<button id="__moduleid___reset"><span class="buttontext">Reset to default values</span></button></p>
+<script>
+$( "#__moduleid___submit" ).click( function() {
+// ?    $("#__moduleid__").prop('disabled', true);
+//    $("input").prop('disabled', true);
+//    $(this).prop('disabled', true);
+    $( "#__moduleid___results" ).text( "" );
+    var output_msgs = $("#__moduleid___output #msgs");
+    output_msgs.text( "" );
+    console.log( $( "#__moduleid__" ).serializeArray() );
+    saveLastValues( "__moduleid__" );
+    resetDefaultValues( "__moduleid___output" );
+    console.log( "calling ajax" );
+//    $.getJSON( 'ajax/__menu:id__/__moduleid__.php', $( "#__moduleid__" ).serializeArray(), function( data, status, jqXHR ) {
+//    $.post( 'ajax/__menu:id__/__moduleid__.php', $( "#__moduleid__" ).serializeArray(), function( data, status, jqXHR ) {
+//           console.log( "data, status, jqHXR" );
+//           console.log( data );
+//           console.log( status );
+//           console.log( jqXHR );
+//           $( "#__moduleid___results" ).text( data.toSource() );
+//    }, "json" );
+
+     $.ajax( {
+//    $(this).ajaxSubmit( {
+             dataType: "json",
+             cache:false,
+//             timeout:3000,  // for testing
+             type:"POST",
+             url:"ajax/__menu:id__/__moduleid__.php",
+             data: $( "#__moduleid__" ).serializeArray() 
+            } )
+    .done( function( data, status, xhr ) {
+           console.log( "data, status, xhr" );
+           console.log( data );
+           console.log( status );
+           console.log( xhr );
+//           $( "#__moduleid___results" ).text( data.toSource() );
+// loop through data pairs
+           var appended = 0;
+           $.each(data, function(k, v) {
+           
+               console.log( k + " => " + v );                         
+               var match = $( "#__moduleid___output" ).find( "#" + k );
+//               console.log( match.attr( "type" ) );
+               if ( match.length )
+               {
+//                   console.log( "has it" );
+                   switch ( match.attr( "type" ) )
+                   {
+                        case "plot2d" : $.plot( match, v, gd.data( "_plot_options" ) ); 
+                               var savekey = "__moduleid___output:#" + k + ":last_value";
+//                               console.log( "manually saving in global data plot2d trying as " + savekey );
+                               $( "#global_data" ).data( savekey , v ); 
+//                               $( "#global_data" ).data( "__moduleid___output:#" + k + ":last_value", v ); 
+                               break;
+//                       case "plot2d" : $.plot( match, [ [[0, 0], [1, 1]] ], { yaxis: { max: 1 } } ); break;
+                       default : match.val( v ); break;
+                   }
+               } else {
+//                   console.log( "does NOT have it" );
+                     if ( !appended )
+                     {
+                        output_msgs.append( "<p>Unexpected results:</p>" );
+                        appended = 1;
+                     }
+                     output_msgs.append( "<p>" + k + " => " + v + "</p>" );
+               }
+           });
+           saveLastValues( "__moduleid___output" );
+           saveLastValue( "__moduleid___output", "#msgs" );
+          } )
+    .fail( function( xhr, status, errorThrown ) {
+           console.log( "xhr, status, errorThrown" );
+           console.log( xhr );
+           console.log( status );
+           console.log( errorThrown );
+           $( "#__moduleid___results" ).html( "<span class=\"warning\"> Failed: " + status + " : '" + xhr.status + ":" + errorThrown + "' on URL ajax/__menu:id__/__moduleid__.php </span>" );
+          } );
+    return false;
+});
+$( "#__moduleid___reset" ).click( function() {
+    resetDefaultValues( "__moduleid__" );
+    resetDefaultValues( "__moduleid___output" );
+    resetDefaultValue( "__moduleid___output", "#msgs" );
+    return false;
+});
+</script>
+</form>
+<div id="__moduleid___results"></div>

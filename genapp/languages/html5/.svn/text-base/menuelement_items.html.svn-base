@@ -1,0 +1,6 @@
+    <button id="__menu:id_____menu:modules:id__">__menu:modules:label__</button> 
+<script>
+    $( "#__menu:id_____menu:modules:id__" ).click(function() {
+        $( "#panel___menu:id__" ).load( "ajax/__menu:id__/__menu:modules:id__.html" );
+    });
+</script>

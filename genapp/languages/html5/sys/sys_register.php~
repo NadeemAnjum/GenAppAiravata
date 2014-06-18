@@ -1,0 +1,84 @@
+<?php
+header('Content-type: application/json');
+
+session_start(); 
+
+if ( !sizeof( $_REQUEST ) )
+{
+    $responseVar = array("error" => "PHP code received no \$_REQUEST?" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+if ( !is_string( $_REQUEST[ 'userid' ] ) || 
+   strlen( $_REQUEST[ 'userid' ] ) < 3 ||
+   strlen( $_REQUEST[ 'userid' ] ) > 30 ||
+   !filter_var( $_REQUEST[ 'userid' ], FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>'/^[A-Za-z][A-Za-z0-9_]+$/') ) ) )
+{
+    $responseVar = array("error" => "empty or invalid user name" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+$userid = $_REQUEST[ 'userid' ];
+
+if ( !is_string( $_REQUEST[ 'password1' ] ) || strlen( $_REQUEST[ 'password1' ] ) < 10 || strlen( $_REQUEST[ 'password1' ] ) > 100 )
+{
+    $responseVar = array("error" => "empty or invalid password" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+if( $_REQUEST[ 'password1' ] != $_REQUEST[ 'password2' ] )
+{
+    $responseVar = array("error" => "Passwords do not match" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+$email = filter_var( $_REQUEST[ 'email' ], FILTER_SANITIZE_EMAIL );
+
+if ( !is_string( $email ) || 
+   !strlen( $email ) ||
+   !filter_var( $email, FILTER_VALIDATE_EMAIL ) )
+{
+    $responseVar = array("error" => "PHP code received empty or invalid email" );
+    echo (json_encode($responseVar));
+    exit();
+}
+
+
+// connect
+try {
+     $m = new MongoClient();
+} catch ( Exception $e ) {
+    $responseVar = array("error" => "Could not connect to the db " + $e->getMessage() );
+    echo (json_encode($responseVar));
+    exit();
+}
+  
+$coll = $m->__application__->users;
+
+if ( $doc = $coll->findOne( array( "name" => $_REQUEST[ 'userid' ] ) ) )
+{
+   $results[ 'status' ] = "User id already registered, please try another";
+   echo (json_encode($results));
+   exit();
+}
+
+$pw = password_hash( $_REQUEST[ 'password1' ], PASSWORD_DEFAULT );
+
+try {
+    $coll->insert( array( "name" => $_REQUEST[ 'userid' ], "password" => $pw, "email" => $email ), array("j" => true ));
+} catch(MongoCursorException $e) {
+    $results[ 'status' ] = "User id already registered, please try another";
+    echo (json_encode($results));
+    exit();
+}
+
+$results[ 'status' ] = "User successfully added, you can now login";
+
+echo (json_encode($results));
+exit();
+?>
+

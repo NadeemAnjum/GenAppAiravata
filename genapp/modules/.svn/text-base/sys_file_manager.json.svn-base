@@ -1,0 +1,42 @@
+{
+    "moduleid" : "sys_file_manager",
+    "executable" : "sys_file_manager",
+    "label"    : "Files Manager",
+    "submit_label" : "Files",
+    "resetonload"  : "true",
+    "noreset"  : "true",
+    "submit_label" : "Download",
+    "fields"   : [
+                  {
+                   "role"     : "input",
+                   "id"       : "label1",
+                   "label"    : "Files",
+                   "type"     : "label",
+                   "default"  : "header3",
+                   "posthline"   : "true"
+                   },
+                  {
+                   "role"     : "input",
+                   "id"       : "selectedfiles",
+                   "label"    : "User file tree",
+                   "type"     : "tree"
+                   },
+                  {
+                   "role"    : "input",
+                   "id"      : "compression",
+                   "name"    : "compression",
+                   "label"   : "Compression type",
+                   "type"    : "listbox",
+                   "values"  : "none~no~gzip tarball~gz~bzip2 tarball~bz2~xz tarball~xz~zipped~zip",
+                   "default" : "bz2",
+                   "help"    : "You can select the compression type here.  Select <b>none</b> for a list of individual file links"
+                   },
+                  {
+                   "role"    : "output",
+                   "id"      : "outfiles",
+                   "type"    : "file",
+                   "label"   : "",
+                   "multiple" : "true"
+                  }
+                  ]
+}

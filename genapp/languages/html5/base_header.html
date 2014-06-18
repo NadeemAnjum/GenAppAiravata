@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>__title__ __version__</title>
+<style>
+
+document
+{  
+    margin: 0;  
+    padding: 0;  
+}  
+
+body {
+background: rgb( __background_color_rgb__ );
+color: rgb( __text_color_rgb__ );
+}
+
+.warning {
+color: rgb( __error_color_rgb__ );
+}
+
+.header1 {
+font-size: 2em;
+__~header1_color{color: rgb( __header1_color__ );}
+}
+.header2 {
+font-size: 1.75em;
+__~header2_color{color: rgb( __header2_color__ );}
+}
+.header3 {
+font-size: 1.5em;
+__~header3_color{color: rgb( __header3_color__ );}
+}
+.header4 {
+font-size: 1.25em;
+__~header4_color{color: rgb( __header4_color__ );}
+}
+
+.sidebar {
+    position: absolute;
+    left: 0;
+    display: block;  
+}
+
+.sidebar ul {
+   list-style-type: none;
+   padding-left: 0;
+}
+
+/* .sidebar ul li + li {
+  border-top: 1px dotted;
+} */
+
+.sidebar ul li {
+   display: block;  
+   width: 140px;  
+   font-size: 18px;  
+   line-height: 44px;  
+   text-align: center;  
+   vertical-align: middle;
+   text-decoration: none;  
+   color: rgb( __text_color_rgb__ );
+}
+
+.sidebar ul li img {
+   vertical-align: middle;
+   float: right;
+}
+
+.sidebar ul li:hover {
+   color: rgb( __select_color_rgb__ );  
+}
+
+.config {
+   vertical-align: middle;
+   float: right;
+}
+
+.hoverhighlight {
+   text-align: right;
+}
+
+.hoverhighlight:hover {
+   color: rgb( __select_color_rgb__ );  
+}
+
+#panelmain {
+position: relative;
+    display: block;  
+
+}
+
+a:link    {color: rgb( __button_color_rgb__ );}
+a:visited {color: rgb( __text_color_rgb__ );}
+a:hover   {color: rgb( __button_hover_color_rgb__ );}
+a:active  {color: rgb( __select_color_rgb__ );}
+
+button {
+  outline: none;
+/*  cursor: none; */
+  border: 0px;
+  text-decoration: none;
+  text-shadow: 0 1px 1px rgba(0,0,0,.3);
+  border-radius: .2em;
+  -webkit-border-radius: .2em; 
+  -moz-border-radius: .2em;
+  background-color: rgb( __button_color_rgb__ );
+  background: -webkit-gradient(linear, left top, left bottom, from( rgb( __button_color_rgb__ ) ), to( rgb( __button_g_color_rgb__ ) ));
+  background: -moz-linear-gradient(top, rgb( __button_color_rgb__ ),  rgb( __button_g_color_rgb__ ) );
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb( __button_g_color_rgb__ ), endColorstr=rgb( __button_g_color_rgb__ ));
+  padding: 0;
+  padding-left: 2px; 
+  padding-right: 2px; 
+}
+
+
+button:hover {
+/*   opacity: .5; */
+   background-color: rgb( __button_hover_color_rgb__ );
+   background: -webkit-gradient(linear, left top, left bottom, from( rgb( __button_hover_color_rgb__ ) ), to( rgb( __button_hover_g_color_rgb__ ) ));
+    background: -moz-linear-gradient(top, rgb( __button_hover_color_rgb__ ),  rgb( __button_hover_g_color_rgb__ ) );
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb( __button_hover_g_color_rgb__ ), endColorstr=rgb( __button_hover_g_color_rgb__ ));
+/*   color: rgb( 255, 128, 0 );   */
+}
+
+button:active {
+position: relative;
+top: 1px;
+left: 1px;
+}
+
+.box-shadow-menu { 
+vertical-align:middle;
+font-size: 2em;
+}
+
+.box-shadow-menu:hover { 
+  color: rgb(__select_color_rgb__);
+  stroke: rgb(__select_color_rgb__);
+}
+
+.svgmenu {
+  color: rgb(__text_color_rgb__);
+  stroke: rgb(__text_color_rgb__);
+  padding: 5px;
+}
+.svgmenu:hover { 
+  color: rgb(__select_color_rgb__);
+  stroke: rgb(__select_color_rgb__);
+}
+.highlight:hover { 
+  color: rgb(__select_color_rgb__);
+}
+
+.help {
+    background-color: rgba(__help_background_color_rgb__, 0.95 );
+    color: rgb(__help_text_color_rgb__);
+    border-radius: .5em;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    opacity: 0; /* Make it transparent */
+    padding: .5em;
+    position: absolute;
+    text-decoration: none;
+    visibility: hidden; /* and hidden */
+/*    width: 25em; */
+    z-index: 10;
+}
+
+.help_link_on:hover + span {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modalDialog {
+   position: fixed;
+/*             font-family: Arial, Helvetica, sans-serif; */
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   background: rgba(0,0,0,0.8);
+   z-index: 99999;
+   opacity:0;
+   -webkit-transition: opacity 400ms ease-in;
+   -moz-transition: opacity 400ms ease-in;
+   transition: opacity 400ms ease-in;
+   pointer-events: none;
+}
+
+.modalDialog_on {
+   opacity:1;
+   pointer-events: auto;
+}
+
+.modalDialog > div {
+   width: 50%;
+   position: relative;
+   margin: 10% auto;
+   padding: 5px 20px 13px 20px;
+   border-radius: 10px;
+   background: rgb( __background_color_rgb__ );
+   background: -moz-linear-gradient(rgb( __background_color_rgb__ ), #222);
+   background: -webkit-linear-gradient(rgb( __background_color_rgb__ ), #222);
+   background: -o-linear-gradient(rgb( __background_color_rgb__ ), #222);
+}
+
+.close {
+   background: #606061;
+   color: #FFFFFF;
+   line-height: 25px;
+   position: absolute;
+   right: -12px;
+   text-align: center;
+   top: -10px;
+   width: 24px;
+   text-decoration: none;
+   font-weight: bold;
+   -webkit-border-radius: 12px;
+   -moz-border-radius: 12px;
+   border-radius: 12px;
+   -moz-box-shadow: 1px 1px 3px #000;
+   -webkit-box-shadow: 1px 1px 3px #000;
+   box-shadow: 1px 1px 3px #000;
+}
+
+.close:hover { background: #00d9ff; }
+
+</style>
+<script src="js/jquery-1.11.0.min.js"></script>
+<script src="js/jquery.flot-0.8.1.min.js"></script>
+<script src="js/uuid.min.js"></script>
+<script src="js/autobahn.min.js"></script>
+<link rel="stylesheet" href="css/jstree.min.css">
+<script src="js/jstree.min.js"></script>
+</head>
+<header>
+<table width=100%> <tr>
+<td> <span id="menuspan" onclick="menuOnOff(event);" class="box-shadow-menu"> 
+  <svg class="svgmenu" width="20" height="20" stroke-width="2.7">
+    <path d="M0,1.5 20,1.5" />
+    <path d="M0,9.5 20,9.5" />
+    <path d="M0,17.5 20,17.5" />
+  </svg>
+  <span id="seabug" height=50px></span>
+ </span></td>
+<td><h2>__title__ __version__</h2></td>
+<td align=right >
+  <table>
+    <tr>
+    <td>
+    <table cellspacing="0" cellpadding="0">
+      <tr><td><div id="sel_project"></div></td></tr>
+      <tr><td><div id="login" class="hoverhighlight"></div></td></tr>
+      <tr><td><div id="register" class="hoverhighlight"></div></td></tr>
+      <tr><td><div id="logoff" class="hoverhighlight"></div></td></tr>
+      <tr><td><div id="hoverhelp" class="hoverhighlight"></div></td></tr>
+    </table>
+    </td>
+    <td>
+    <table cellspacing="0" cellpadding="0">
+      <tr>
+      <td><img src="etc/files.png" width=40px id="files" class="config"></td>
+      <td><div id="userconfig"><img src="etc/config.png" width=40px id="config" class="config"></div></td>
+      </tr>
+    </table>
+    </td>
+    </tr>
+  </table>
+</td>
+</tr>
+</table>
+<div id="openModal" class="modalDialog">
+   <div>
+      <span id="closeModal" class="close">X</span>
+      <div id="configbody"></div>
+   </div>
+</div>
+</header>
+<body>
+
+<div id="global_data"> </div>
+<div id="_state"> </div>
+<script> 
+                         
+Object.size = function(obj) {
+__~debugpull{   console.log( "object.size called" )}
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+__~debugpull{   console.log( "object.size size " + size )}
+    return size;
+};
+
+gd = $( "#global_data" );
+
+function setMsging()
+{
+__~debugws{   console.log( 'setMsging() called' );}
+   var ws = $( "#_state" ).data( "_ws" );
+   if ( !ws )
+   {
+      console.log( "setMsging: ws not defined" );
+      return;
+   }
+
+   var conn = $( '#_state' ).data( "_wssession" );
+   if ( conn && conn.isOpen )
+   {
+      console.log( "setMsging: connection is already open" );
+      return;
+   }
+    
+__~debugws{   console.log( 'setMsging trying new session' );}
+   conn = new ab.Session( ws 
+      , function() {            // Once the connection has been established
+__~debugws{          console.log( 'setMsging: connection established' );}
+          $( '#_state' ).data( "_wssession", conn );
+        }
+      , function() {            // When the connection is closed
+            console.warn('setMsging connection closed');
+        }
+      , {                       // Additional parameters, we're ignoring the WAMP sub-protocol for older browsers
+            'skipSubprotocolCheck': true
+        }
+    );
+
+__~debugws{   console.log( 'setMsging end' );}
+}        
+
+function subMsging( vuuid, onevent )
+{
+   console.log( "subMsging: " + vuuid );
+   var ws = $( "#_state" ).data( "_ws" );
+   if ( !ws )
+   {
+      console.log( "subMsging: ws not defined" );
+      return;
+   }
+
+   var conn = $( '#_state' ).data( "_wssession" );
+   if ( !conn )
+//   if ( conn && !conn.isOpen )
+   {
+      console.log( "subMsging: connection is not open" );
+      return;
+   }
+
+   conn.subscribe( vuuid, onevent );
+// this doesn't work:
+// .then( function( subscription ) { $( '#_state' ).data( "_wssub:" + vuuid, subscription ) } );
+}
+
+function unsubMsging( vuuid )
+{
+   console.log( "unsubMsging: " + vuuid );
+   var ws = $( "#_state" ).data( "_ws" );
+   if ( !ws )
+   {
+      console.log( "subMsging: ws not defined" );
+      return;
+   }
+
+   var conn = $( '#_state' ).data( "_wssession" );
+   if ( !conn )
+//   if ( conn && !conn.isOpen )
+   {
+      console.log( "subMsging: connection is not open" );
+      return;
+   }
+
+   conn.unsubscribe( vuuid );
+   $( '#_state' ).data( "_wssub:" + vuuid, null );
+}
+
+function msgGenericEvent( vuuid, data )
+{
+   console.log( 'msgGenericEvent ' + vuuid + ' : ' + data.json);
+}
+
+function getSid()
+{
+$.ajax({
+url: "ajax/sys_uid.php",
+cache: false
+})
+.done( function( data, status, xhr ) {
+  $.each(data, function(k, v) {
+__~debugsid{   console.log( "sid ajax:" + k + " => " + v );}
+//  if ( k == "_sid" )
+//   {
+//     $( "#global_data" ).data( "sid", v );
+//   } 
+   if ( k == "_ws" )
+   {
+     $( "#_state" ).data( "_ws", v );
+     setMsging();
+   }
+ }); 
+});
+}
+
+getSid();
+
+function checkFloat( tag )
+{
+__~debugcheck{   console.log( "checkfloat " + tag );}
+   var t = $( tag );
+   var fieldValue=t.val();
+   if ( isNaN( fieldValue ) )
+   {
+       t.val( t.prop( "defaultValue" ) );
+       $( tag + "_msg" ).html( " not a valid floating point number, reset to default" );
+   } else {
+       if ( fieldValue < parseFloat ( t.attr( "min" ) ) )
+       { 
+           t.val( t.attr( "min" ) );
+           $( tag + "_msg" ).html( " value set to minimum allowed" );
+       } else {
+           if ( fieldValue > parseFloat ( t.attr( "max" ) ) )
+           { 
+               t.val( t.attr( "max" ) );
+               $( tag + "_msg" ).html( " value set to maximum allowed" );
+           } else {
+               $( tag + "_msg" ).html( "" );
+           }
+       } 
+   }
+}
+
+
+gd.data( "_plot_options", 
+ {
+   font : {
+             color : "rgb( __text_color_rgb__ )"
+          },
+//   grid : {
+//             color : "rgb( __text_color_rgb__ )",
+//             boarderWidth : 0.5
+//          },
+   xaxis : {
+//             color : "rgb( __text_color_rgb__ )",
+             color : "gray",
+             lineWidth : 0.5,
+             font : {
+                 color : "rgb( __text_color_rgb__ )"
+             }
+          },
+   yaxis : {
+//             color : "rgb( __text_color_rgb__ )",
+             color : "gray",
+             lineWidth : 0.5,
+             font : {
+                 color : "rgb( __text_color_rgb__ )"
+             }
+          },
+   lines: { 
+            lineWidth : 1.0
+          } 
+} );
+
+function checkMatch( tag1, tag2 )
+{
+__~debugcheck{   console.log( "checkMatch " + tag1 + " " + tag2 );}
+   if ( $( tag1 ).val() != $( tag2 ).val() )
+   {
+      $( tag1 + "_msg" ).html( " does not match" );
+   } else {
+      $( tag1 + "_msg" ).html( "" );
+   }
+}
+    
+function checkInt( tag )
+{
+__~debugcheck{   console.log( "checkint " + tag );}
+   var t = $( tag );
+   var fieldValue=t.val();
+   if ( isNaN( fieldValue ) )
+   {
+       t.val( t.prop( "defaultValue" ) );
+       $( tag + "_msg" ).html( " not a valid number, reset to default" );
+   } else {
+       if ( fieldValue < parseInt ( t.attr( "min" ) ) )
+       { 
+           t.val( t.attr( "min" ) );
+           $( tag + "_msg" ).html( " value set to minimum allowed" );
+       } else {
+           if ( fieldValue > parseInt ( t.attr( "max" ) ) )
+           { 
+               t.val( t.attr( "max" ) );
+               $( tag + "_msg" ).html( " value set to maximum allowed" );
+           } else {
+               if ( parseInt( fieldValue ) != fieldValue )
+               {   
+                   $( tag + "_msg" ).html( " value rounded to nearset integer" );
+                   t.val( parseInt( parseFloat( fieldValue ) + .5 ) );
+               } else {
+                   $( tag + "_msg" ).html( "" );
+               }
+           }
+       }
+   }
+}
+
+RegExp.quote = function(str) {
+   return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+};
+
+function clearPull( repeater )
+{
+   if ( !repeater || typeof( repeater ) != "string" || repeater.length == 0 || repeater == "#__fields:repeat__" )
+   {
+      repeater = "";
+   }
+__~debugpull{   console.log( "clearpull repeater " + repeater );}
+   $( "#global_data" ).data( "_pull_json"   + repeater, {} );
+   $( "#global_data" ).data( "_pull_update" + repeater, {} );
+   $( "#global_data" ).data( "_pull_type"   + repeater, {} );
+}
+
+function toPull( pkg, tag, type, pulltag, repeater )
+{
+__~debugpull{   console.log( "topull pkg " + pkg + " tag " + tag + " type " + type + " pulltag " + pulltag + " repeater " + repeater);}
+   if ( !repeater || typeof( repeater ) != "string" || repeater.length == 0 || repeater == "#__fields:repeat__" )
+   {
+      repeater = "";
+   }
+__~debugpull{   console.log( "topull repeater " + repeater );}
+   var gd = $( "#global_data" );
+   var tj = gd.data( "_pull_json"   + repeater );
+   var tu = gd.data( "_pull_update" + repeater );
+// for now, just set to 0
+   tj[ pulltag ] = 0;
+   if ( typeof( tu[ pulltag ] ) != "object" )
+   {
+      tu[ pulltag ] = {};
+   }
+__~debugpull{   console.log( "toPull tu before set:" );}
+__~debugpull{   console.log( tu );}
+   tu[ pulltag ][ tag ] = type;
+__~debugpull{   console.log( "topull tag " + tag );}
+   gd.data( "_pull_json"   + repeater, tj );
+   gd.data( "_pull_update" + repeater, tu );
+__~debugpull{   console.log( tj );}
+__~debugpull{   console.log( tu );}
+}
+
+function doPull( repeater )
+{
+   if ( !repeater || typeof( repeater ) != "string" || repeater.length == 0 || repeater == "#__fields:repeat__" )
+   {
+      repeater = "";
+   }
+__~debugpull{   console.log( "doPull" + " repeater " + repeater );}
+   var gd = $( "#global_data" );
+   var s = $( '#_state' );
+   var l = s.data( '_logon' );
+   if ( l && l.length )
+   {
+      var tj = gd.data( "_pull_json" + repeater );
+      tj[ '_logon' ] = l;
+__~debugpull{   console.log( tj );}
+      if ( Object.size( tj ) )
+      {
+__~debugpull{      console.log( "doPull has size" );}
+         $.getJSON( "ajax/sys_config/sys_pull.php", tj )
+         .done( function( data, status, xhr ) {
+__~debugpull{    console.log( "ajax done data:" );}
+__~debugpull{    console.log( data );}
+            var tu = gd.data( "_pull_update" + repeater );
+            $.each(data, function(k, v) {
+__~debugpull{    console.log( k + " => " + v );}
+__~debugpull{    console.log( "typeof tu[k] " + typeof( tu[ k ] ) );}
+               if ( typeof( tu[ k ] ) == "object" )
+               {
+                  $.each( tu[ k ], function( k2, v2 ) {
+__~debugpull{    console.log( "in tu[k]:" + k2 + " => " + v2 );}
+                     var t = $( k2 );
+                     switch( v2 )
+                     {
+                        case "checkbox" : 
+                         t.prop( "checked", v == "on" ); break;
+                        case "email" : 
+                        case "text" : 
+                        case "integer" : 
+                        case "float" : 
+                         t.val( v ); break;
+                        case "listbox" : 
+                         t.empty();
+// setup html for results
+__~debugpull{   console.log( "listbox pull'd " + typeof( v ) ); }
+__~debugpull{   console.log( v ); }
+                         $.each( v, function( k3, v3 ) {
+__~debugpull{   console.log( "listbox append " + v3 ); }
+                           t.append($("<option></option>").attr( "value", v3 ).text( v3 ) );
+                         });
+                         break;
+                        default : 
+                         console.log( "not yet" );
+                     }
+                  });
+               }
+            });
+         })
+         .fail( function( xhr, status, errorThrown ) {
+__~debugpull{    console.log( "ajax fail" );}
+         });
+      } else {
+__~debugpull{      console.log( "doPull t has NO size" );}
+      }
+   }
+}
+
+function resetHoverHelp() {
+   if ( $( "#global_data" ).data( "hoverhelp" ) ||
+        $( "#global_data" ).data( "hoverhelp" ) != 0 )
+   {
+       $( ".help_link" ).removeClass( "help_link_on" );
+       $( ".help_link" ).addClass( "help_link_on" );
+   }
+}
+
+function updateRepeats( pkg, tag )
+{
+   var t = $( tag );
+   var fieldValue=t.val();
+__~debugrepeat{   console.log( "updateRepeats pkg:" + pkg + " tag:" + tag + " x" + fieldValue );}
+// now find all matching fields
+// need to map all "repeat" back references
+   var key = pkg + ":" + tag + ":repeat";
+   var keyc = key + ":count";
+   var lt = $( "#global_data" ).data( keyc );
+   if ( lt == undefined )
+   {
+      $( "#global_data" ).data( keyc, fieldValue );
+   } else {
+      if ( lt == fieldValue )
+      {
+__~debugrepeat{   console.log( "lt == fieldValue" );}
+         return true;
+      }
+   }
+   $( "#global_data" ).data( keyc, fieldValue );
+      
+   var h = $( "#global_data" ).data( key );
+   var r = $( "#global_data" ).data( "repeats" );
+   var re = $( "#global_data" ).data( "repeats_eval" );
+   var out = "";
+   var lk;
+   var to_eval = "";
+   for (var k in h) {
+   // use hasOwnProperty to filter out keys from the Object.prototype
+      if (h.hasOwnProperty(k)) {
+         lk = k + '-span';
+         break;
+      }
+   }
+
+   var rxname = / name="(\w+)(["\[\]])/;
+   var rxid  = / id="(\w+)"/;
+
+   for ( var i = 1; i <= fieldValue; i++ )
+   {
+      for (var k in h) {
+      // use hasOwnProperty to filter out keys from the Object.prototype
+         if (h.hasOwnProperty(k)) {
+   //         lk = k;
+__~debugrepeat{         console.log( 'key is: ' + k + ', value is: ' + h[k] + ' html is ' + r[k] );}
+            var stag = RegExp.quote( k.replace( "#", "" ) );
+
+            var idm = rxid.exec( r[k] );
+            var idx;
+            if ( idm )
+            {
+                idx = idm[ 1 ];                         
+            }
+            var namem = rxname.exec( r[k] );
+            var namex = "";
+            var namext = "";
+            if ( namem )
+            {
+               namex = namem[ 1 ];
+               namext = namem[ 2 ];
+            }
+
+__~debugrepeat{         console.log( "id " + idx + " name " + namex + " nameterm " + namext + " stag " + stag );}
+            var this_out = r[k].replace( "</label>", "[" + i + "]</label>" );
+            var this_eval = re[k];
+            if ( namem )
+            {
+              this_out = this_out.replace( new RegExp( RegExp.quote( 'name="' + namex + namext ) ), 'name="' + namex + "-" + i + namext );
+            }
+            if ( idx )
+            {
+              this_out = this_out.replace( new RegExp( 'id="' + idx + '"' ), 'id="' + idx + "-" + i + '"' );
+              this_out = this_out.replace( new RegExp( 'id="' + idx + '_msg"' ), 'id="' + idx + "-" + i + '_msg"' );
+              this_out = this_out.replace( new RegExp( 'for="' + idx + '"' ), 'for="' + idx + "-" + i + '"' );
+
+              this_eval = this_eval.replace( new RegExp( '"#' + idx + '"', "g" ), '"#' + idx + "-" + i + '"' );
+              this_eval = this_eval.replace( new RegExp( ':' + idx + ':', "g" ), ':' + idx + "-" + i + ':' );
+              this_eval = this_eval.replace( new RegExp( '"#' + idx + '_msg"', "g" ), '"#' + idx + "-" + i + '_msg"' );
+            }
+            out += this_out;
+            to_eval += this_eval;
+         }
+      }
+   }
+__~debugrepeat{   console.log( "out:" + out );}
+__~debugrepeat{   console.log( "to_eval:" + to_eval );}
+__~debugrepeat{   console.log( "lk:" + lk );}
+
+   clearPull( tag );
+   $( lk ).html( out );
+   eval( to_eval );
+   doPull( tag );
+   resetHoverHelp();
+}
+
+function updateRepeatsLb( pkg, tag )
+{
+   var t = $( tag );
+   var fieldValue= t.val();
+
+__~debugrepeatlb{         console.log( 'updateRepeatsLb pkg: ' + pkg + ' tag: ' + tag + ' val: ' + fieldValue );}
+
+// now find all matching fields
+// need to map all "repeat" back references
+   var key   = pkg + ":" + tag + ":repeat";
+   var keylb = pkg + ":" + tag + ":" + fieldValue + ":repeat";
+   var keyc = key + ":count";
+   var lt = $( "#global_data" ).data( keyc );
+   if ( lt == undefined )
+   {
+      $( "#global_data" ).data( keyc, fieldValue );
+   } else {
+      if ( lt == fieldValue )
+      {
+         return true;
+      } else {
+         $(tag + " > option").each(function() { 
+__~debugrepeatlb{         console.log( "option: " + this.text + ' ' + this.value );}
+            if ( this.value != fieldValue )
+            {
+               var hlt = $( "#global_data" ).data( pkg + ":" + tag + ":" + this.value + ":repeat" );
+               for (var k in hlt) {
+                  if (hlt.hasOwnProperty(k)) {
+                     $( k + '-span' ).html( "" );
+                     break;
+                  }
+               }
+            }
+         });
+      }
+   }
+
+   $( "#global_data" ).data( keyc, fieldValue );
+      
+   var h = $( "#global_data" ).data( keylb );
+   var out = "";
+   var lk;
+   var to_eval = "";
+   for (var k in h) {
+   // use hasOwnProperty to filter out keys from the Object.prototype
+      if (h.hasOwnProperty(k)) {
+         lk = k + '-span';
+         break;
+      }
+   }
+
+   var r = $( "#global_data" ).data( "repeats" );
+   var re = $( "#global_data" ).data( "repeats_eval" );
+   for (var k in h) {
+      if (h.hasOwnProperty(k)) {
+         out += r[k];
+         to_eval += re[k];
+      }
+   }
+
+__~debugrepeatlb{   console.log( "out:" + out );}
+__~debugrepeatlb{   console.log( "to_eval:" + to_eval );}
+__~debugrepeatlb{   console.log( "lk:" + lk );}
+
+   clearPull( tag );
+   $( lk ).html( out );
+   eval( to_eval );
+   doPull( tag );
+   resetHoverHelp();
+}
+
+function updateRepeatsCb( pkg, tag, rev )
+{
+   var t = $( tag );
+   var fieldValue;
+   if ( rev )
+   {
+     fieldValue = t.prop( "checked" ) ? 0 : 1;
+   } else {
+     fieldValue = t.prop( "checked" ) ? 1 : 0;
+   }
+__~debugrepeat{   console.log( "updaterepeatsCB pkg: " + pkg + " tag: " + tag );}
+
+// now find all matching fields
+// need to map all "repeat" back references
+   var key = pkg + ":" + tag + ":repeat";
+   var keyc = key + ":count";
+   var lt = $( "#global_data" ).data( keyc );
+   if ( lt == undefined )
+   {
+      $( "#global_data" ).data( keyc, fieldValue );
+   } else {
+      if ( lt == fieldValue )
+      {
+__~debugrepeat{   console.log( "lt == fieldValue" );}
+         return true;
+      }
+   }
+   $( "#global_data" ).data( keyc, fieldValue );
+      
+   var h = $( "#global_data" ).data( key );
+   var out = "";
+   var lk;
+   var to_eval = "";
+   for (var k in h) {
+   // use hasOwnProperty to filter out keys from the Object.prototype
+      if (h.hasOwnProperty(k)) {
+         lk = k + '-span';
+         break;
+      }
+   }
+
+   if ( fieldValue == 1 )
+   {
+      var r = $( "#global_data" ).data( "repeats" );
+      var re = $( "#global_data" ).data( "repeats_eval" );
+      for (var k in h) {
+         if (h.hasOwnProperty(k)) {
+            out += r[k];
+            to_eval += re[k];
+         }
+      }
+   }
+
+__~debugrepeat{   console.log( "out:" + out );}
+__~debugrepeat{   console.log( "to_eval:" + to_eval );}
+__~debugrepeat{   console.log( "lk:" + lk );}
+   clearPull( tag );
+   $( lk ).html( out );
+   eval( to_eval );
+   doPull( tag );
+   resetHoverHelp();
+}
+
+function addRepeat( pkg, tag, reftag )
+{
+__~debugrepeat{   console.log( "addRepeat pkg:" + pkg + " tag:" + tag + " reftag:" + reftag );}
+   var key = pkg + ":" + reftag + ":repeat";
+   var h = $( "#global_data" ).data( key );
+   if ( h == undefined ) {
+      h = new Object();
+   }
+   h[ tag ] = 1;
+   $( "#global_data" ).data( key, h );
+}
+
+function setLastValue( pkg, tag, defval ) {
+    var tl = pkg + ":" + tag + ":last_value";
+    var dv = pkg + ":" + tag + ":default_value";
+    var t = $( tag );
+__~debugvalues{   console.log( "setLastValue pkg:" + pkg + " tag:" + tag + " type:" + t.attr( "type" ) + " value:" + t.val() );}
+    if ( $( "#global_data" ).data( tl ) == undefined ) {
+        switch( t.attr( "type" ) )
+        {
+            case "checkbox" :
+            case "radio" :
+                $( "#global_data" ).data( tl, t.is( ":checked") );
+                $( "#global_data" ).data( dv, t.is( ":checked") ); break;
+            case "div" : 
+            case "msgs" : 
+                $( "#global_data" ).data( tl, t.html() ); 
+                $( "#global_data" ).data( dv, t.html() );
+                break;
+            case "plot2d" :
+__~debugvalues{ console.log( "setLastValue on undefined plot2d not yet: " + tl ); }
+                           break;
+            case "filelink" :
+            case "filelinkm" :
+                $( "#global_data" ).data( tl, $( tag + "_filelink" ).html() );
+__~debugvalues{                console.log( "done filelink on setLastValue" );}
+                break;
+
+            default : 
+                      if ( defval )
+                      {
+__~debugvalues{                console.log( "default value set: " + defval );}
+                         t.val( defval );
+                      }                         
+                      $( "#global_data" ).data( tl, t.val() );
+                      $( "#global_data" ).data( dv, t.val() );
+                      break;
+        }
+    } else {
+        switch( t.attr( "type" ) )
+        {
+            case "checkbox": 
+            case "radio": 
+                   t.prop( "checked", $( "#global_data" ).data( tl ) ); break;
+            case "div" : 
+            case "msgs" : t.html( $( "#global_data" ).data( tl ) ); break;
+            case "plot2d" : 
+__~debugvalues{                     console.log( "setLastValue on plot2d trying" );}
+                     t.plot( $( "#global_data" ).data( tl ), gd.data( "_plot_options" ) ); break;
+            case "filelink" : 
+            case "filelinkm" : 
+                     $( tag + "_filelink" ).html( $( "#global_data" ).data( tl ) );
+                     break;
+            default: t.val( $( "#global_data" ).data( tl ) ); break;
+        }
+    }
+__~debugvalues{    console.log( "t is " + t );}
+__~debugvalues{    console.log( $( "#global_data" ).data( t ) ); }
+}
+
+function saveLastValue( pkg, tag ) {
+   var t = $( tag );
+__~debugvalues{   console.log( "saveLastValue pkg:" + pkg + " tag:" + tag + " type:" + t.attr( "type" ) + " value:" + t.val() );}
+   switch( t.attr( "type" ) )
+   {
+       case "file" : console.log( "file set is insecure, skipped" ); return; break;
+       case "checkbox" :
+       case "radio" :
+                     $( "#global_data" ).data( pkg + ":" + tag + ":last_value", t.is( ":checked") ); break;
+       case "div" :
+       case "msgs" : $( "#global_data" ).data( pkg + ":" + tag + ":last_value", t.html() ); break;
+       case "plot2d" : 
+__~debugvalues{ console.log( "saveLastValue on plot2d not yet" );  }
+                       break;
+       case "filelink" : 
+       case "filelinkm" : 
+                     $( "#global_data" ).data( pkg + ":" + tag + ":last_value", $( tag + "_filelink" ).html() ); 
+                     break;
+       default: $( "#global_data" ).data( pkg + ":" + tag + ":last_value", t.val() ); break;
+   }
+__~debugvalues{   console.log( "t is " + pkg + ":" + tag + ":last_value" );}
+__~debugvalues{   console.log( $( "#global_data" ).data( pkg + ":" + tag + ":last_value" ) );}
+}
+
+function saveLastValues( pkg ) {
+__~debugvalues{   console.log( "saveLastValues " + pkg );}
+   $( "#" + pkg + " :input" ).each(function() {
+      saveLastValue( pkg, "#" + $( this ).attr( "id" ) );
+   });
+}
+
+function resetDefaultValue( pkg, tag ) {
+__~debugvalues{   console.log( "resetDefaultValue pkg:" + pkg + " tag:" + tag );}
+   var t = $( tag );
+__~debugvalues{   console.log( "resetDefaultValue type:" + t.attr( "type" ) );}
+__~debugvalues{   console.log( "resetDefaultValue tagname:" + t.prop( "tagName" ) );}
+   if(  t.prop( "tagName" ) == 'SELECT' ) {
+    t.val( $( "#global_data" ).data( pkg + ":" + tag + ":default_value" ) );
+   } else {
+      switch( t.attr( "type" ) )
+      {
+          case "file" : console.log( "file set is insecure, skipped" ); return; break;
+          case "checkbox" : 
+          case "radio" : 
+                        t.prop( "checked", $( "#global_data" ).data( pkg + ":" + tag + ":default_value" ) ); break;
+          case "div" :
+          case "msgs" : t.html( $( "#global_data" ).data( pkg + ":" + tag + ":default_value" ) ); 
+                        break;
+          case "filelink" :
+          case "filelinkm" :
+                        $( tag + "_filelink" ).html( " " );
+                        break;
+          case "plot2d" : 
+                        $( "#global_data" ).data( pkg + ":" + tag + ":last_value", [[]] );
+                        t.plot( [[]], gd.data( "_plot_options") ); break;
+                        break;
+          default: t.val( t.attr( "value" ) ); break;
+      }
+   }
+   saveLastValue( pkg, tag );
+   $( tag + "_msg" ).html("");
+}
+
+function resetDefaultValues( pkg ) {
+__~debugvalues{   console.log( "resetDefautValues " + pkg );}
+   $( "#" + pkg + " :input" ).each(function() {
+      resetDefaultValue( pkg, "#" + $( this ).attr( "id" ) );
+   });
+   var e = $( "#global_data" ).data( "_extra_resets" );
+   for ( var i in e ) 
+   {
+__~debugvalues{     console.log( "extra_resets " + e[i] );}
+      resetDefaultValue( pkg, "#" + e[i] );
+   }
+}
+
+function setHoverHelp() {
+   if ( !$( "#global_data" ).data( "hoverhelp" ) ||
+        $( "#global_data" ).data( "hoverhelp" ) == 0 )
+   {
+       $( ".help_link" ).removeClass( "help_link_on" );
+       $( "#hoverhelp" ).html( "Help off" );
+   } else {
+       $( ".help_link" ).addClass( "help_link_on" );
+       $( "#hoverhelp" ).html( "Help on" );
+   }
+}
+
+function setLogin() {
+   if ( !$( "#global_data" ).data( "login" ) ||
+        $( "#global_data" ).data( "login" ) == 0 )
+   {
+       $( "#login" ).html( "Logged in" );
+   } else {
+       $( "#login" ).html( "Logged off" );
+   }
+}
+</script>
+
+<nav class="sidebar toggle">
+<ul>
