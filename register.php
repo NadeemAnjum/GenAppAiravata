@@ -16,6 +16,5 @@ for($i=0;$i<sizeof($results['menu']);$i++){
 	}	
 }
 $args=trim($args);
-echo "java -jar registerGenAppModule.jar $args";
 exec("java -jar registerGenAppModule.jar $args");
 ?>
