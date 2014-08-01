@@ -42,7 +42,7 @@ void __application__::module_submit___menu:id_____menu:modules:id__()
    //   qDebug() << "process exists and isExecutable";
    
    // make a temporary directory:
-
+   /*
    QString dir = UTILITY::unique_directory( "__docroot:qt3__/__application__" );
    if ( dir.isEmpty() )
    {  
@@ -79,8 +79,42 @@ void __application__::module_submit___menu:id_____menu:modules:id__()
             this, 
             SLOT( finished___menu:id_____menu:modules:id__( int, QProcess::ExitStatus ) ) );
    process___menu:id_____menu:modules:id__->start( program, args );
+   process_json[ "__menu:modules:id__" ] = "";  
+   qDebug() << "process started";
+    */
    process_json[ "__menu:modules:id__" ] = "";
    qDebug() << "process started";
+   string tprojId = createProject("nadeem", "__menu:modules:id__");
+   qDebug() << "project created";
+   char *projId = new char[tprojId.length() + 1];
+   strcpy(projId, tprojId.c_str());
+   QString tmp = input_to_json( "__menu:modules:id__" );
+   string tjson = tmp.toUtf8().constData();
+   char *json = new char[tjson.length() + 1];
+   strcpy(json, tjson.c_str());
+   string texpId = createExperiment("nadeem", "exp1", projId, "__menu:modules:id__", json);	
+   char *expId = new char[texpId.length() + 1];
+   strcpy(expId, texpId.c_str());
+   launchExperiment(expId);
+   while((getExperimentStatus(expId))!=7){	
+	unsigned int microseconds = 1000;
+	usleep(microseconds);
+   }
+   unsigned int microseconds = 500000;
+   usleep(microseconds);
+   string output = getExperimentOutput(expId);     
+   QString qoutput = QString::fromStdString(output);
+   process_json[ "__menu:modules:id__" ] = qoutput;
+   qDebug() << "process___menu:id_____menu:modules:id__->finished()";
+   
+   qDebug() << qoutput;
+  // disconnect( process___menu:id_____menu:modules:id__, 0, 0, 0 );
+   // post process data into output fields, add unexpected data etc
+   // delete process___menu:id_____menu:modules:id__;
+   // process___menu:id_____menu:modules:id__ = (QProcess *) 0;
+  process_results( "__menu:modules:id__" );
+
+
 }
 
 void __application__::readyReadStandardOutput___menu:id_____menu:modules:id__()

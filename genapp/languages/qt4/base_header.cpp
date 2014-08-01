@@ -1,4 +1,6 @@
 #include "__application__.h"
+#include <unistd.h>
+#include "airavata.cpp"
 
 mQLabel::mQLabel( QWidget *parent, Qt::WindowFlags f ) : QLabel( parent, f ) 
 { 
