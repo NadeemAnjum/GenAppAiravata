@@ -265,7 +265,7 @@ if ( sizeof( $_REQUEST ) )
 		ob_start();
 		
 		$projId=createProject("nadeem", "__executable__");
-		$expId=createExperiment("nadeem", "exp1", $projId, "__executable__Application", $json);	
+		$expId=createExperiment("nadeem", "exp1", $projId, "__executable__", $json);	
 		$res = launchExperiment($expId);	
 		while(($status=getExperimentStatus($expId))!="COMPLETED"){		
 			sleep(1);

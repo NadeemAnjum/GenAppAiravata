@@ -1,0 +1,383 @@
+<form id="simulate_1">
+<span id="simulate_1_input_area"></span>
+<script>
+{
+   var t = $( "#global_data" ).data( "repeats" );
+   if ( t != undefined ) {
+      $( "#global_data" ).removeData( "repeats" );
+   }
+   t = new Object();
+   $( "#global_data" ).data( "repeats", t );
+}
+{
+   var t = $( "#global_data" ).data( "repeats_eval" );
+   if ( t != undefined ) {
+      $( "#global_data" ).removeData( "repeats_eval" );
+   }
+   t = new Object();
+   $( "#global_data" ).data( "repeats_eval", t );
+}
+input_eval = "";
+input_html = "<table>";
+input_repeats = "";
+input_trees = [];
+skipped_row = 0;
+clearPull();
+this_html = '<tr><td><label for="input1">Input value 1 </label></td><td><input type="number" name="input1" id="input1" value="0" min="0" max="1e+50" required><span id="input1_msg" class="warning" > </span></td></tr>';
+this_eval = 
+'setLastValue( "simulate_1", "#input1" );'
+ + '$( "#input1" ).blur( function() { checkFloat( "#input1" ); });'
+ + '$( "#input1" ).keypress( function() { $( "#input1_msg" ).html( "" ); });';
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+this_html = '<tr><td><label for="input2">Input value 2 </label></td><td><input type="number" name="input2" id="input2" value="1" min="-10" max="10"><span id="input2_msg" class="warning" > </span></td></tr>';
+this_eval = 
+'setLastValue( "simulate_1", "#input2" );'
+ + '$( "#input2" ).blur( function() { checkInt( "#input2" ); });'
+ + '$( "#input2" ).keypress( function() { $( "#input2_msg" ).html( "" ); });'
+ ;
+
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+this_html = '<tr><td><label for="input3" class="highlight">Input value 3 </label></td><td><input type="checkbox" name="input3" id="input3" checked></td></tr>';
+this_eval = 
+'setLastValue( "simulate_1", "#input3" );'
+
+;
+;
+;
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+this_html = '<tr><td><label for="input4" >Input file </label></td><td><input type="file" name="input4" id="input4" required><span id="input4_msg" class="warning" > </span></td></tr>';
+this_eval = 'setLastValue( "simulate_1", "#input4" );' +
+'$( "#input4" ).change( function() { $( "#input4_msg" ).html( "" ); });';
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+this_html = '<tr><td><label for="input5" >Input files </label></td><td><input type="file" name="input5[]" multiple id="input5" required><span id="input5_msg" class="warning" > </span></td></tr>';
+this_eval = 'setLastValue( "simulate_1", "#input5" );' +
+'$( "#input5" ).change( function() { $( "#input5_msg" ).html( "" ); });';
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+if( skipped_row == 1 ){ input_html += "</tr>"; }
+input_html += '</table>';
+$( '#simulate_1_input_area' ).html( input_html );
+eval( input_eval );
+</script>
+<p><button id="simulate_1_submit"><span class="buttontext">Submit</span></button>
+<button id="simulate_1_reset"><span class="buttontext">Reset to default values</span></button>
+
+</p>
+<span id="simulate_1_progress"></span>
+<script>
+
+
+//function progressHandlingFunction(e){
+//    if(e.lengthComputable){
+//        $('#simulate_1_progress progress').attr({value:e.loaded,max:e.total});
+//    }
+//}
+
+$( "#simulate_1_submit" ).click( function() {
+    $( "#simulate_1_results" ).text( "" );
+    var output_msgs = $("#simulate_1_output #msgs");
+    output_msgs.text( "" );
+
+    saveLastValues( "simulate_1" );
+    resetDefaultValues( "simulate_1_output" );
+
+    var found_errors = 0;
+    $("#simulate_1").find("input").each(function(i){
+//      console.log("values:" + $(this).attr('id') + " required:" + $(this).attr( 'required' ) +  
+//      " val:" + $(this).val() + " val-len:" + $(this).val().length
+//      );
+//      if ( $(this).attr( 'multiple' ) )
+//      {
+//         var filelist = document.getElementById( $(this).attr( 'id' ) ).files || [];
+//         for ( var i = 0; i < filelist.length; ++i )
+//         {                               
+//              console.log(" file " + i + " " + filelist[i].name );
+//         }
+//      }
+      if ( $(this).attr( 'required' ) && $(this).val().length == 0 )
+      {
+          var tag =  "#simulate_1 " + "#" + $(this).attr('id') + "_msg";
+
+          $( tag ).html( "missing required field" );
+          found_errors = 1;
+      }
+    });
+    if ( found_errors )
+    {
+        return false;
+    }
+
+    var tree_html = "";
+    $( "._hidden_tree_selects" ).remove( );
+    $.each( input_trees, function( k, v ){
+
+        $( 'input[type=hidden][name="' + v + '[]"]' ).remove();
+        var selectedElms = $('#' + v).jstree("get_selected", true);
+        var i = 0;
+        $.each(selectedElms, function() {
+           tree_html += '<input type="hidden" name="' + v + '[]" value="' + this.id + '" class="_hidden_tree_selects"/>';
+
+        });
+    });
+
+    $( this ).append( tree_html );
+
+
+    var logonadd = $("<input>").attr("type", "hidden").attr("name", "_logon").val( $( "#_state" ).data( "_logon" ) );$( this ).append($(logonadd));
+    var projectadd = $("<input>").attr("type", "hidden").attr("name", "_project").val( $( "#_state" ).data( "_project" ) );$( this ).append($(projectadd));
+    var vuuid = uuid.v1();
+    console.log( "uuid:" + vuuid );
+    var uuidadd = $("<input>").attr("type", "hidden").attr("name", "_uuid").val( vuuid );$( this ).append($(uuidadd));
+    function msg_simulate_1 ( id, data )
+    {
+       $('#simulate_1_progress').html( "" );
+       output_msgs.text( "" );
+       var appended = 0;
+//       var json = jQuery.parseJSON( data );
+//       $.each(data, function(k0, v0) {
+//           if ( k0 == 'json' )
+//           {
+              $.each( data, function(k, v) {
+
+                var match = $( "#simulate_1_output" ).find( "#" + k );
+                if ( match.length )
+                {
+                    switch ( match.attr( "type" ) )
+                    {
+                       case "plot2d" : $.plot( match, v, gd.data( "_plot_options" ) ); 
+                                       var savekey = "simulate_1_output:#" + k + ":last_value";
+                                       $( "#global_data" ).data( savekey , v ); 
+                                       break;
+                       case "checkbox" : 
+                       case "radio" : 
+                               match.prop( "checked", true ); break;
+                       case "div" :  match.html( v ); break;
+                       case "filelink" : 
+                               var tlink = "<a href=\"" + v + "\">" + v.split( '/' ).pop() + "</a>";
+                               var savekey = "simulate_1_output:#" + k + ":last_value";
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                                break;
+                       case "filelinkm" : 
+                               var savekey = "simulate_1_output:#" + k + ":last_value";
+                               var tlink = "";
+                               $.each( v, function( k2, v2 ) {
+                                   tlink += "<a href=\"" + v2 + "\">" + v2.split( '/' ).pop() + "</a> ";
+                               } );
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                               break;
+                       default : 
+                          if ( $( "#global_data" ).data( "_append:simulate_1_output_" + k ) )
+                          {
+                             match.val( match.val() + "\n" + v );
+                             match.height( parseFloat( match.prop( 'scrollHeight' ) + parseFloat( match.css("borderTopWidth" ) ) + parseFloat( match.css("borderBottomWidth") ) ) );
+                          } else {
+                             match.val( v );
+                          }
+                          break;
+                    }
+                } else {
+                    if ( k.charAt( 0 ) != "_" )
+                    {
+                       if ( !appended )
+                       {
+                           output_msgs.append( "<p>Unexpected results:</p>" );
+                           appended = 1;
+                       }
+                       output_msgs.append( "<p>" + k + " => " + v + "</p>" );
+                    }
+                } 
+             });
+//          }
+//       });
+    }
+
+    subMsging( vuuid, msg_simulate_1 );
+
+    var formData = new FormData($('form')[0]);
+
+
+    $('#simulate_1_progress').html( "Uploading:<progress></progress>" );
+    $.ajax( {
+             dataType: "json",
+             cache:false,
+//             timeout:3000,  // for testing
+             type:"POST",
+             url:"ajax/simulate/simulate_1.php",
+             data: formData,
+             xhr: function() {  // Custom XMLHttpRequest
+                 var myXhr = $.ajaxSettings.xhr();
+                 if(myXhr.upload){ // Check if upload property exists
+                     myXhr.upload.addEventListener('progress',
+                         function(e) {
+                         if(e.lengthComputable){
+                           $('#simulate_1_progress progress').attr({value:e.loaded,max:e.total});
+                         } }
+//                     progressHandlingFunction
+                    , false);
+                 }
+                 return myXhr;
+             },
+             contentType: false,
+             processData: false
+            } )
+    .done( function( data, status, xhr ) {
+
+
+
+
+// loop through data pairs
+           output_msgs.text( "" );
+           var appended      = 0;
+           var state_changed = 0;
+           var do_close      = 0;
+           $.each(data, function(k, v) {
+           
+
+               var match = $( "#simulate_1_output" ).find( "#" + k );
+               if ( match.length )
+               {
+                   switch ( match.attr( "type" ) )
+                   {
+                       case "plot2d" : $.plot( match, v, gd.data( "_plot_options" ) ); 
+                               var savekey = "simulate_1_output:#" + k + ":last_value";
+                               $( "#global_data" ).data( savekey , v ); 
+                               break;
+                       case "checkbox" : 
+                       case "radio" : 
+                               match.prop( "checked", true ); break;
+                       case "div" :  match.html( v ); break;
+                       case "filelink" : 
+                               var tlink = "<a href=\"" + v + "\">" + v.split( '/' ).pop() + "</a>";
+                               var savekey = "simulate_1_output:#" + k + ":last_value";
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                               break;
+                       case "filelinkm" : 
+                               var savekey = "simulate_1_output:#" + k + ":last_value";
+                               var tlink = "";
+                               $.each( v, function( k2, v2 ) {
+                                   tlink += "<a href=\"" + v2 + "\">" + v2.split( '/' ).pop() + "</a> ";
+                               } );
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                               break;
+                       default :
+                          if ( $( "#global_data" ).data( "_append:simulate_1_output_" + k ) )
+                          {
+                             match.val( match.val() + "\n" + v );
+                             match.height( parseFloat( match.prop( 'scrollHeight' ) + parseFloat( match.css("borderTopWidth") ) + parseFloat( match.css("borderBottomWidth") ) ) );
+                          } else {
+                             match.val( v );
+                          }
+                          break;
+                   }
+               } else {
+                     if ( k.charAt( 0 ) == "_" )
+                     {
+                        $( "#_state" ).data( k, v );
+                        state_changed = 1;
+                     } else {
+                        if ( k == "-close" )
+                        {
+                           do_close = 1;
+                        } else {
+                           if ( !appended )
+                           {
+                              output_msgs.append( "<p>Unexpected results:</p>" );
+                              appended = 1;
+                           }
+                           output_msgs.append( "<p>" + k + " => " + v + "</p>" );
+                       }
+                   }
+               }
+           });
+           saveLastValues( "simulate_1_output" );
+           saveLastValue( "simulate_1_output", "#msgs" );
+           $('#simulate_1_progress').html( "" );
+           if ( state_changed )
+           {
+               syncState();
+           }
+           if ( do_close )
+           {
+               closeModal();
+           }
+           unsubMsging( vuuid );
+          } )
+    .fail( function( xhr, status, errorThrown ) {
+
+
+
+
+           $( "#simulate_1_results" ).html( "<span class=\"warning\"> Failed: " + status + " : '" + xhr.status + ":" + errorThrown + "' on URL ajax/simulate/simulate_1.php </span>" );
+           $('#simulate_1_progress').html( "" );
+           unsubMsging( vuuid );
+          } );
+    return false;
+});
+$( "#simulate_1_reset" ).click( function() {
+    resetDefaultValues( "simulate_1" );
+    resetDefaultValues( "simulate_1_output" );
+    resetDefaultValue( "simulate_1_output", "#msgs" );
+    eval( input_repeats );
+    return false;
+});
+setHoverHelp();
+
+
+eval( input_repeats );
+doPull();
+</script>
+</form>
+<div id="simulate_1_results"></div>
+<hr>
+<form id="simulate_1_output">
+<div id="msgs" class="warning" type="msgs"></div>
+<script>
+setLastValue( "simulate_1_output", "#msgs" );
+$( "#global_data" ).data( "_extra_resets", [] );
+</script>
+<table>
+<tr><td><label for="output1">Output value 1 </label></td><td><input type="number" name="output1" id="output1" readonly></td></tr>
+<script>
+setLastValue( "simulate_1_output", "#output1" );
+</script>
+<tr><td><label for="output2">output file </label>
+</td>
+<td><div id="output2" type="filelink" readonly><span id="output2_filelink"></span></div>
+</td></tr>
+<script>
+setLastValue( "simulate_1_output", "#output2" );
+$( "#global_data" ).data( "_extra_resets" ).push( "output2" );
+</script>
+<tr><td><label for="output3">output file 2 </label>
+</td>
+<td><div id="output3" type="filelink" readonly><span id="output3_filelink"></span></div>
+</td></tr>
+<script>
+setLastValue( "simulate_1_output", "#output3" );
+$( "#global_data" ).data( "_extra_resets" ).push( "output3" );
+</script>
+</table>
+</form>

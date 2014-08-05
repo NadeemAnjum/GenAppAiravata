@@ -1,0 +1,45 @@
+===========================================
+README: TESTING GENAPP AIRAVATA INTEGRATION
+===========================================
+
+1. Set up developement environment at listed on GenApp Wiki: http://gw105.iu.xsede.org:8000/genapp/wiki/setupdev
+2. set GENAPP environment vairable to the location of genapp folder and add $GENAPP/bin to your PATH
+3. Change to genapp-output/nadeemtest/
+4. Execute "genapp.pl"
+
+Generated Code will be present in genapp-output/nadeemtest/output
+
+Follow the instructions below for registering genapp modules and running the specific language interfaces.
+
+++++++++++++++++++++++++++
+Registering GenApp Modules
+++++++++++++++++++++++++++
+1. Start your local airavata server
+2. Execute register.php (in registration folder) from command-line to register genapp modules
+
++++++++++
+PHP/HTML5
++++++++++
+1. Copy the contents of genapp-output/nadeemtest/output/html5 to a web server
+2. Start your local airavata server and make sure airavata-clienr-properties.ini in html5 folder has the correct host/port
+3. Load index.html5 on a browser to test
+
++++++++++
+C++/Qt4
++++++++++
+
+1. Change to "genapp-output/nadeemtest/output/qt4/nadeemtest"
+2. Execute "qmake-qt4 -project"
+3. Edit "nadeemtest.pro' to add the following lines:
+	INCLUDEPATH += /usr/include/qwt-qt4 ../lib/
+	LIBS += `pkg-config --libs glib-2.0` -L/usr/local/lib -lthrift -lqwt-qt4 
+	QMAKE_CXXFLAGS += -w -Wno-write-strings -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H  `pkg-config --cflags glib-2.0`
+4. Copy resouces/qt4/lib folder to genapp-output/nadeemtest/output/qt4/
+5. Copy resouces/qt4/airavata.cpp to genapp-output/nadeemtest/output/qt4/nadeemtest
+6. Start your local airavata server and make sure lines 55-56 of airavata.cpp have the correct host/port 
+7. Create folder genapp-output/nadeemtest/output/qt4/genapptest and copy genapp-output/nadeemtest/output/qt4/nadeemtest/style.qss to it. 
+8. Execute "qmake-qt4"
+9. Execute "make'
+10. Change to "genapp-output/nadeemtest/output/qt4"
+11. Run executable ./nadeemtest/nadeemtest
+

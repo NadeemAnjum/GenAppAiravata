@@ -1,0 +1,372 @@
+<form id="interact_2">
+<span id="interact_2_input_area"></span>
+<script>
+{
+   var t = $( "#global_data" ).data( "repeats" );
+   if ( t != undefined ) {
+      $( "#global_data" ).removeData( "repeats" );
+   }
+   t = new Object();
+   $( "#global_data" ).data( "repeats", t );
+}
+{
+   var t = $( "#global_data" ).data( "repeats_eval" );
+   if ( t != undefined ) {
+      $( "#global_data" ).removeData( "repeats_eval" );
+   }
+   t = new Object();
+   $( "#global_data" ).data( "repeats_eval", t );
+}
+input_eval = "";
+input_html = "<table>";
+input_repeats = "";
+input_trees = [];
+skipped_row = 0;
+clearPull();
+this_html = '<tr><td><label class="header1 ">Header 1 no hline</label><span class="help">__fields:help__</span></td></tr>';
+
+input_html += this_html;
+this_html = '<tr><td><label for="input1">Input value 1 </label></td><td><input type="number" name="input1" id="input1" value="0" min="0" max="1e+50" required><span id="input1_msg" class="warning" > </span></td></tr>';
+this_eval = 
+'setLastValue( "interact_2", "#input1" );'
+ + '$( "#input1" ).blur( function() { checkFloat( "#input1" ); });'
+ + '$( "#input1" ).keypress( function() { $( "#input1_msg" ).html( "" ); });';
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+this_html = '<tr><td colspan="__fields:colspan__"><hr></td></tr><tr><td><label class="header2 ">Header 2 prehline</label><span class="help">__fields:help__</span></td></tr>';
+
+input_html += this_html;
+this_html = '<tr><td><label for="input2">Input value 2 </label></td><td><input type="number" name="input2" id="input2" value="1" min="-10" max="10"><span id="input2_msg" class="warning" > </span></td></tr>';
+this_eval = 
+'setLastValue( "interact_2", "#input2" );'
+ + '$( "#input2" ).blur( function() { checkInt( "#input2" ); });'
+ + '$( "#input2" ).keypress( function() { $( "#input2_msg" ).html( "" ); });'
+ ;
+
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+this_html = '<tr><td><label class="header3 ">Header 3 posthline</label><span class="help">__fields:help__</span></td></tr><tr><td colspan="__fields:colspan__"><hr></td></tr>';
+
+input_html += this_html;
+this_html = '<tr><td><label for="input3" class="highlight">Input value 3 </label></td><td><input type="checkbox" name="input3" id="input3" checked></td></tr>';
+this_eval = 
+'setLastValue( "interact_2", "#input3" );'
+
+;
+;
+;
+if ( skipped_row == 1 ){ this_html = this_html.replace(/^<tr>/, "" ); skipped_row=0;};
+
+
+input_html += this_html;
+input_eval += this_eval;
+if( skipped_row == 1 ){ input_html += "</tr>"; }
+input_html += '</table>';
+$( '#interact_2_input_area' ).html( input_html );
+eval( input_eval );
+</script>
+<p><button id="interact_2_submit"><span class="buttontext">Submit</span></button>
+<button id="interact_2_reset"><span class="buttontext">Reset to default values</span></button>
+
+</p>
+<span id="interact_2_progress"></span>
+<script>
+
+
+//function progressHandlingFunction(e){
+//    if(e.lengthComputable){
+//        $('#interact_2_progress progress').attr({value:e.loaded,max:e.total});
+//    }
+//}
+
+$( "#interact_2_submit" ).click( function() {
+    $( "#interact_2_results" ).text( "" );
+    var output_msgs = $("#interact_2_output #msgs");
+    output_msgs.text( "" );
+
+    saveLastValues( "interact_2" );
+    resetDefaultValues( "interact_2_output" );
+
+    var found_errors = 0;
+    $("#interact_2").find("input").each(function(i){
+//      console.log("values:" + $(this).attr('id') + " required:" + $(this).attr( 'required' ) +  
+//      " val:" + $(this).val() + " val-len:" + $(this).val().length
+//      );
+//      if ( $(this).attr( 'multiple' ) )
+//      {
+//         var filelist = document.getElementById( $(this).attr( 'id' ) ).files || [];
+//         for ( var i = 0; i < filelist.length; ++i )
+//         {                               
+//              console.log(" file " + i + " " + filelist[i].name );
+//         }
+//      }
+      if ( $(this).attr( 'required' ) && $(this).val().length == 0 )
+      {
+          var tag =  "#interact_2 " + "#" + $(this).attr('id') + "_msg";
+
+          $( tag ).html( "missing required field" );
+          found_errors = 1;
+      }
+    });
+    if ( found_errors )
+    {
+        return false;
+    }
+
+    var tree_html = "";
+    $( "._hidden_tree_selects" ).remove( );
+    $.each( input_trees, function( k, v ){
+
+        $( 'input[type=hidden][name="' + v + '[]"]' ).remove();
+        var selectedElms = $('#' + v).jstree("get_selected", true);
+        var i = 0;
+        $.each(selectedElms, function() {
+           tree_html += '<input type="hidden" name="' + v + '[]" value="' + this.id + '" class="_hidden_tree_selects"/>';
+
+        });
+    });
+
+    $( this ).append( tree_html );
+
+
+    var logonadd = $("<input>").attr("type", "hidden").attr("name", "_logon").val( $( "#_state" ).data( "_logon" ) );$( this ).append($(logonadd));
+    var projectadd = $("<input>").attr("type", "hidden").attr("name", "_project").val( $( "#_state" ).data( "_project" ) );$( this ).append($(projectadd));
+    var vuuid = uuid.v1();
+    console.log( "uuid:" + vuuid );
+    var uuidadd = $("<input>").attr("type", "hidden").attr("name", "_uuid").val( vuuid );$( this ).append($(uuidadd));
+    function msg_interact_2 ( id, data )
+    {
+       $('#interact_2_progress').html( "" );
+       output_msgs.text( "" );
+       var appended = 0;
+//       var json = jQuery.parseJSON( data );
+//       $.each(data, function(k0, v0) {
+//           if ( k0 == 'json' )
+//           {
+              $.each( data, function(k, v) {
+
+                var match = $( "#interact_2_output" ).find( "#" + k );
+                if ( match.length )
+                {
+                    switch ( match.attr( "type" ) )
+                    {
+                       case "plot2d" : $.plot( match, v, gd.data( "_plot_options" ) ); 
+                                       var savekey = "interact_2_output:#" + k + ":last_value";
+                                       $( "#global_data" ).data( savekey , v ); 
+                                       break;
+                       case "checkbox" : 
+                       case "radio" : 
+                               match.prop( "checked", true ); break;
+                       case "div" :  match.html( v ); break;
+                       case "filelink" : 
+                               var tlink = "<a href=\"" + v + "\">" + v.split( '/' ).pop() + "</a>";
+                               var savekey = "interact_2_output:#" + k + ":last_value";
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                                break;
+                       case "filelinkm" : 
+                               var savekey = "interact_2_output:#" + k + ":last_value";
+                               var tlink = "";
+                               $.each( v, function( k2, v2 ) {
+                                   tlink += "<a href=\"" + v2 + "\">" + v2.split( '/' ).pop() + "</a> ";
+                               } );
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                               break;
+                       default : 
+                          if ( $( "#global_data" ).data( "_append:interact_2_output_" + k ) )
+                          {
+                             match.val( match.val() + "\n" + v );
+                             match.height( parseFloat( match.prop( 'scrollHeight' ) + parseFloat( match.css("borderTopWidth" ) ) + parseFloat( match.css("borderBottomWidth") ) ) );
+                          } else {
+                             match.val( v );
+                          }
+                          break;
+                    }
+                } else {
+                    if ( k.charAt( 0 ) != "_" )
+                    {
+                       if ( !appended )
+                       {
+                           output_msgs.append( "<p>Unexpected results:</p>" );
+                           appended = 1;
+                       }
+                       output_msgs.append( "<p>" + k + " => " + v + "</p>" );
+                    }
+                } 
+             });
+//          }
+//       });
+    }
+
+    subMsging( vuuid, msg_interact_2 );
+
+    var formData = new FormData($('form')[0]);
+
+
+    $('#interact_2_progress').html( "Uploading:<progress></progress>" );
+    $.ajax( {
+             dataType: "json",
+             cache:false,
+//             timeout:3000,  // for testing
+             type:"POST",
+             url:"ajax/interact/interact_2.php",
+             data: formData,
+             xhr: function() {  // Custom XMLHttpRequest
+                 var myXhr = $.ajaxSettings.xhr();
+                 if(myXhr.upload){ // Check if upload property exists
+                     myXhr.upload.addEventListener('progress',
+                         function(e) {
+                         if(e.lengthComputable){
+                           $('#interact_2_progress progress').attr({value:e.loaded,max:e.total});
+                         } }
+//                     progressHandlingFunction
+                    , false);
+                 }
+                 return myXhr;
+             },
+             contentType: false,
+             processData: false
+            } )
+    .done( function( data, status, xhr ) {
+
+
+
+
+// loop through data pairs
+           output_msgs.text( "" );
+           var appended      = 0;
+           var state_changed = 0;
+           var do_close      = 0;
+           $.each(data, function(k, v) {
+           
+
+               var match = $( "#interact_2_output" ).find( "#" + k );
+               if ( match.length )
+               {
+                   switch ( match.attr( "type" ) )
+                   {
+                       case "plot2d" : $.plot( match, v, gd.data( "_plot_options" ) ); 
+                               var savekey = "interact_2_output:#" + k + ":last_value";
+                               $( "#global_data" ).data( savekey , v ); 
+                               break;
+                       case "checkbox" : 
+                       case "radio" : 
+                               match.prop( "checked", true ); break;
+                       case "div" :  match.html( v ); break;
+                       case "filelink" : 
+                               var tlink = "<a href=\"" + v + "\">" + v.split( '/' ).pop() + "</a>";
+                               var savekey = "interact_2_output:#" + k + ":last_value";
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                               break;
+                       case "filelinkm" : 
+                               var savekey = "interact_2_output:#" + k + ":last_value";
+                               var tlink = "";
+                               $.each( v, function( k2, v2 ) {
+                                   tlink += "<a href=\"" + v2 + "\">" + v2.split( '/' ).pop() + "</a> ";
+                               } );
+                               $( "#global_data" ).data( savekey , tlink );
+                               $( "#" + k + "_filelink" ).html( tlink );
+                               break;
+                       default :
+                          if ( $( "#global_data" ).data( "_append:interact_2_output_" + k ) )
+                          {
+                             match.val( match.val() + "\n" + v );
+                             match.height( parseFloat( match.prop( 'scrollHeight' ) + parseFloat( match.css("borderTopWidth") ) + parseFloat( match.css("borderBottomWidth") ) ) );
+                          } else {
+                             match.val( v );
+                          }
+                          break;
+                   }
+               } else {
+                     if ( k.charAt( 0 ) == "_" )
+                     {
+                        $( "#_state" ).data( k, v );
+                        state_changed = 1;
+                     } else {
+                        if ( k == "-close" )
+                        {
+                           do_close = 1;
+                        } else {
+                           if ( !appended )
+                           {
+                              output_msgs.append( "<p>Unexpected results:</p>" );
+                              appended = 1;
+                           }
+                           output_msgs.append( "<p>" + k + " => " + v + "</p>" );
+                       }
+                   }
+               }
+           });
+           saveLastValues( "interact_2_output" );
+           saveLastValue( "interact_2_output", "#msgs" );
+           $('#interact_2_progress').html( "" );
+           if ( state_changed )
+           {
+               syncState();
+           }
+           if ( do_close )
+           {
+               closeModal();
+           }
+           unsubMsging( vuuid );
+          } )
+    .fail( function( xhr, status, errorThrown ) {
+
+
+
+
+           $( "#interact_2_results" ).html( "<span class=\"warning\"> Failed: " + status + " : '" + xhr.status + ":" + errorThrown + "' on URL ajax/interact/interact_2.php </span>" );
+           $('#interact_2_progress').html( "" );
+           unsubMsging( vuuid );
+          } );
+    return false;
+});
+$( "#interact_2_reset" ).click( function() {
+    resetDefaultValues( "interact_2" );
+    resetDefaultValues( "interact_2_output" );
+    resetDefaultValue( "interact_2_output", "#msgs" );
+    eval( input_repeats );
+    return false;
+});
+setHoverHelp();
+
+
+eval( input_repeats );
+doPull();
+</script>
+</form>
+<div id="interact_2_results"></div>
+<hr>
+<form id="interact_2_output">
+<div id="msgs" class="warning" type="msgs"></div>
+<script>
+setLastValue( "interact_2_output", "#msgs" );
+$( "#global_data" ).data( "_extra_resets", [] );
+</script>
+<table>
+<tr><td><hr></td></tr><tr><td><label class="header4">Header 4 pre & post hline</label></td></tr><tr><td><hr></td></tr>
+
+
+
+<tr><td><label class="header4"></label></td></tr><tr><td><hr></td></tr>
+
+
+
+<tr><td><hr></td></tr><tr><td><label>Header no default pre and post hline</label></td></tr><tr><td><hr></td></tr>
+
+
+
+<tr><td><label for="output1">Output value 1 </label></td><td><input type="number" name="output1" id="output1" readonly></td></tr>
+<script>
+setLastValue( "interact_2_output", "#output1" );
+</script>
+</table>
+</form>
