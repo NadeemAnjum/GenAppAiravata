@@ -260,26 +260,27 @@ if ( sizeof( $_REQUEST ) )
       $cmd .= " '$json'";
     }
 
-    $cmd .= " 2> $dir/_stderr";
-    error_log( "\tcmd: <$cmd>\n", 3, "/tmp/mylog" );
-		ob_start();
-		
-		$projId=createProject("nadeem", "build_1");
-		$expId=createExperiment("nadeem", "exp1", $projId, "build_1", $json);	
-		$res = launchExperiment($expId);	
-		while(($status=getExperimentStatus($expId))!="COMPLETED"){		
-			sleep(1);
-		}
-		$outputs = getOutput($expId);	
+    $cmd .= " 2> $dir/_stderr";    
+    if($cmdprefix == "_airavata"){
+	ob_start();
 
-		foreach ($outputs as $output)
-		{
-				error_log("$output->type: $output->value      <br><br>");
-				$results = $output->value ;
-		}
-		
-		
-		//	$results = exec( $cmd );
+	$projId=createProject("nadeem", "build_1");
+	$expId=createExperiment("nadeem", "exp1", $projId, "build_1", $json);	
+	$res = launchExperiment($expId);	
+	while(($status=getExperimentStatus($expId))!="COMPLETED"){		
+		sleep(1);
+	}
+	$outputs = getOutput($expId);	
+
+	foreach ($outputs as $output)
+	{
+			error_log("$output->type: $output->value      <br><br>");
+			$results = $output->value ;
+	}
+    }
+    else{
+	$results = exec( $cmd );
+    }
 		
     $results = str_replace( "/var/www/html/nadeemtest/", "", $results );
     if ( $do_logoff == 1 )
