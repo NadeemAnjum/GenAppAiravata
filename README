@@ -9,7 +9,7 @@ Testing with genarated intefaces
 Ready-to-Run interfaces can be found at genapp-output/nadeemtest/output-example. To Run these, follow the steps below:
 
 1. Start your local Airavata Server 
-2. Execute register.php (in genapp-out/nadeemtest) from command-line to register genapp modules
+2. Execute register.php (in genapp-output/nadeemtest) from command-line to register genapp modules
 3. PHP/HTML5: Copy the contents of genapp-output/nadeemtest/output/html5 to a web server. Load "index.html" on a web-browser. Make sure airavata-client-properties.ini in html5 folder has the correct host/port
 4. C++/QT4: Make sure lines 55-56 of airavata.cpp (in output-example/qt4/nadeemtest) have the correct host/port. Change to "output-example/qt4/" and execute "./nadeemtest/nadeemtest"
 
@@ -24,7 +24,7 @@ Generating and Testing interfaces
 
 Follow the steps below to build, configure and run genapp interfaces from scratch. 
 
-1. Set up developement environment at listed on GenApp Wiki: http://gw105.iu.xsede.org:8000/genapp/wiki/setupdev
+1. Set up developement environment as listed on GenApp Wiki: http://gw105.iu.xsede.org:8000/genapp/wiki/setupdev
 2. Set GENAPP environment vairable to the location of genapp folder and add $GENAPP/bin to your PATH
 3. Change to genapp-output/nadeemtest/
 4. Execute "genapp.pl"
@@ -37,7 +37,7 @@ Follow the instructions below for registering genapp modules and running the spe
 Registering GenApp Modules
 ++++++++++++++++++++++++++
 1. Start your local airavata server
-2. Execute register.php (in genapp-out/nadeemtest) from command-line to register genapp modules
+2. Execute register.php (in genapp-output/nadeemtest) from command-line to register genapp modules
 
 +++++++++
 PHP/HTML5
