@@ -1,5 +1,5 @@
 ===========================================
-README: TESTING GENAPP AIRAVATA INTEGRATION
+README: GENAPP AIRAVATA INTEGRATION
 ===========================================
 
 ++++++++++++++++++++++++++++++++
@@ -18,7 +18,9 @@ Required Dependencies for C++/Qt4:
 2. qt4
 3. qwt-qt4
 
-++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++
+Generating and Testing interfaces
++++++++++++++++++++++++++++++++++
 
 Follow the steps below to build, configure and run genapp interfaces from scratch. 
 
