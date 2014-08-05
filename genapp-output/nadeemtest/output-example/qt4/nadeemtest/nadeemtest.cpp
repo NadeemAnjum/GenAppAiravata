@@ -90,7 +90,7 @@ mQRadioButton::~mQRadioButton() {}
 nadeemtest::nadeemtest() : QFrame()
 {
    {
-      QFile sf( "genapptest/style.qss" );
+      QFile sf( "nadeemtest/style.qss" );
       if ( !sf.open( QFile::ReadOnly ) )
       {
          qDebug() << QString( "Error: could not open style file %1" ).arg( sf.fileName() );
