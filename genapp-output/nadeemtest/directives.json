@@ -3,7 +3,7 @@
   "title"                     : "nadeemtest",
   "application"               : "nadeemtest",
   "version"                   : "2.0",
-  "languages"                 : [ "html5", "qt3", "qt4" ],
+  "languages"                 : [ "html5", "qt4" ],
   "executable_path"           :
                                 {
                                  "html5" : "/home/nadeem/nadeemtest/bin",
