@@ -104,7 +104,7 @@ void __application__::module_submit___menu:id_____menu:modules:id__()
    unsigned int microseconds = 500000;
    usleep(microseconds);
    string output = getExperimentOutput(expId);     
-   QString qoutput = QString(output);
+   QString qoutput = QString::fromStdString(output);
    process_json[ "__menu:modules:id__" ] = qoutput;
    process_results( "__menu:modules:id__" );
 }

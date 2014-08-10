@@ -1,6 +1,4 @@
 #include "__application__.h"
-#include <unistd.h>
-#include "airavata.cpp"
 
 QPalette palette_app;
 QPalette palette_pb_hover;
