@@ -9,14 +9,24 @@ Testing with genarated intefaces
 Ready-to-Run interfaces can be found at genapp-output/nadeemtest/output-example. To Run these, follow the steps below:
 
 1. Start your local Airavata Server 
-2. Execute register.php (in genapp-output/nadeemtest) from command-line to register genapp modules
-3. PHP/HTML5: Copy the contents of genapp-output/nadeemtest/output/html5 to a web server. Load "index.html" on a web-browser. Make sure airavata-client-properties.ini in html5 folder has the correct host/port
-4. C++/QT4: Make sure lines 55-56 of airavata.cpp (in output-example/qt4/nadeemtest) have the correct host/port. Change to "output-example/qt4/" and execute "./nadeemtest/nadeemtest"
 
-Required Dependencies for C++/Qt4:
-1. glib
-2. qt4
-3. qwt-qt4
+2. Execute register.php (in genapp-output/nadeemtest) from command-line to register genapp modules
+
+3. PHP/HTML5: 
+	i)	Copy the contents of genapp-output/nadeemtest/output/html5 to a web server. 
+	ii) 	Make sure airavata-client-properties.ini in html5 folder has the correct host/port
+	iii)	Load "index.html" on a web-browser.
+
+4. C++/QT4: 
+	i)	Make sure lines 55-56 of airavata.cpp (in output-example/qt4/nadeemtest) have the correct host/port. 
+	ii)	Change to "output-example/qt4/" and execute "./nadeemtest/nadeemtest"
+
+5. C++/QT3: 
+	i)	Make sure lines 55-56 of airavata.cpp (in output-example/qt3/nadeemtest) have the correct host/port. 
+	ii)	Set QTDIR, QWTDIR and QWT3DDIR point to your qt3, qwt-qt3, qwt3d-qt3 installations Export LD_LIBRARY_PATH=$QTDIR/lib:$QWTDIR/lib:$QWT3DDIR/lib:$ULTRASCAN/lib:$LD_LIBRARY_PATH, export PATH=$QTDIR/bin:$PATH. 
+	iii)	Change to "output-example/qt3/" and execute "./nadeemtest/nadeemtest"
+
+Other dependencies: glib
 
 +++++++++++++++++++++++++++++++++
 Generating and Testing interfaces
@@ -56,17 +66,33 @@ C++/Qt4
 	INCLUDEPATH += /usr/include/qwt-qt4 ../lib/
 	LIBS += `pkg-config --libs glib-2.0` -L/usr/local/lib -lthrift -lqwt-qt4 
 	QMAKE_CXXFLAGS += -w -Wno-write-strings -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H  `pkg-config --cflags glib-2.0`
-4. Copy resouces/qt4/lib folder to genapp-output/nadeemtest/output/qt4/
-5. Copy resouces/qt4/airavata.cpp to genapp-output/nadeemtest/output/qt4/nadeemtest
+4. Copy resouces/qt/lib folder to genapp-output/nadeemtest/output/qt4/
+5. Copy resouces/qt/airavata.cpp to genapp-output/nadeemtest/output/qt4/nadeemtest
 6. Start your local airavata server and make sure lines 55-56 of airavata.cpp have the correct host/port 
 7. Execute "qmake-qt4"
 8. Execute "make"
 9. Change to "genapp-output/nadeemtest/output/qt4" directory
 10. Run executable ./nadeemtest/nadeemtest
 
-Required Dependencies for C++/Qt4:
+Other dependencies:
 1. glib
-2. qt4
-3. qwt-qt4
+
+++++++++++
+C++/QT3
+++++++++++
+1. Change to "genapp-output/nadeemtest/output/qt3/nadeemtest"
+2. Set QTDIR, QWTDIR and QWT3DDIR point to your qt3, qwt-qt3, qwt3d-qt3 installations Export LD_LIBRARY_PATH=$QTDIR/lib:$QWTDIR/lib:$QWT3DDIR/lib:$ULTRASCAN/lib:$LD_LIBRARY_PATH, export PATH=$QTDIR/bin:$PATH.
+3. Execute "qmake -project"
+4. Edit "nadeemtest.pro" to add the following lines:
+	INCLUDEPATH += ../lib/
+	LIBS += `pkg-config --libs glib-2.0` -L/usr/local/lib -lthrift 
+	QMAKE_CXXFLAGS += -w -Wno-write-strings -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H  `pkg-config --cflags glib-2.0`
+4. Copy resouces/qt/lib folder to genapp-output/nadeemtest/output/qt3/
+5. Copy resouces/qt/airavata.cpp to genapp-output/nadeemtest/output/qt3/nadeemtest
+6. Start your local airavata server and make sure lines 55-56 of airavata.cpp have the correct host/port 
+7. Execute "qmake"
+8. Execute "make"
+9. Change to "genapp-output/nadeemtest/output/qt3" directory
+10. Run executable ./nadeemtest/nadeemtest
 
 
